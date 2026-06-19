@@ -1,0 +1,872 @@
+{
+  "release_id": "uby-time-dataset-v0.1.0",
+  "release_version": "0.1.0",
+  "title": "UBY-labeled cross-scale temporal database for Phanerozoic fossil occurrences, forcing events, astronomical records, and mass-extinction dynamics",
+  "generated_at_unix": 1781872268.336335,
+  "root": "C:/Users/Administrator/Desktop/UBY-Specification/uby-time",
+  "license": "CC-BY-4.0 for UBY-derived data and release metadata; BSD-3-Clause for code",
+  "file_count": 56,
+  "total_size_bytes": 5850959685,
+  "files": [
+    {
+      "path": "data/processed/end_ordovician_binning_compression.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 994,
+      "sha256": "90f4d9d72a28460ffe9b6088776770f7988314b12b96085f7ebf8bd501e2182b",
+      "row_count": 3,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_forcing_lags.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 322,
+      "sha256": "909e21ac567d9829eede4cac49e87f59ed8df38c1f3574cd9abb226b57249411",
+      "row_count": 2,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_sampling_bins.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 1490,
+      "sha256": "a67745f26a02fcad234f2c90323649e13fa0c7fcbc2952c0ad684f8840886d2c",
+      "row_count": 30,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_sampling_control_bins.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 6304,
+      "sha256": "0907178de2faf2c9e4370e91ed667d8fee4f43f4e4a73f7185aafa72eb9a2ad9",
+      "row_count": 30,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_sampling_control_summary.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 4987,
+      "sha256": "3f335ec2d03256c1edfffde404356e659b5cbc92c5a02753328b32c7412c3f33",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "event",
+        "generated_by",
+        "inputs",
+        "key_findings",
+        "outputs",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/end_ordovician_sampling_controls.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 24576,
+      "sha256": "4ae18ae085271905acfdf4ed6f0274489d7e9cad3482a69debcb50e97a2300da",
+      "row_count": 30,
+      "sqlite_tables": {
+        "sampling_control_bins": 30
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_signal.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 81920,
+      "sha256": "2aca476012abdf287a5d0c593f01ec3689b57133edd2b5a3582ec3a6c64e94b6",
+      "row_count": 340,
+      "sqlite_tables": {
+        "binning_compression": 3,
+        "forcing_lags": 2,
+        "sampling_bins": 30,
+        "taxon_level_stability": 3,
+        "taxonomic_drivers": 302
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_signal_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 12876,
+      "sha256": "9c6f8f4b32321f29af4a98ec0cf4eab6683392f0e67c6c01cba5e54e432bd046",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "event",
+        "generated_by",
+        "inputs",
+        "key_findings",
+        "outputs",
+        "research_status",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/end_ordovician_taxon_level_stability.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 458,
+      "sha256": "da815b14577ecfffc91c1cea90d1efb931b75947f7b137e618de8c0b0a3f1dda",
+      "row_count": 3,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/end_ordovician_taxonomic_drivers.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 27037,
+      "sha256": "a7be8d1c5eb2bba0c853bcf0a9a6e12b2bddd96f983d71120f93a6bb8118bcf0",
+      "row_count": 302,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/extinction_sensitivity.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 106496,
+      "sha256": "0e5201f116974b7641c0ec3c20b21f730c19208992f3bde0474d3928cc8207bd",
+      "row_count": 216,
+      "sqlite_tables": {
+        "extinction_sensitivity_summary": 216
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/extinction_sensitivity_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 5097,
+      "sha256": "5e0e2bcd6bd479058242280d307df6bfe576a56ca50f74c70896da879330b055",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "before_after_stability_by_event",
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "generated_by",
+        "inputs",
+        "key_stability_tests",
+        "mean_extinction_intensity_rank",
+        "mean_recovery_lag_rank_years",
+        "outputs",
+        "parameters",
+        "research_status",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/extinction_sensitivity_summary.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 55720,
+      "sha256": "5109ad61466a2d63be160b18016af02dd5b57bd9e5fda4b55cbdee7537daa703",
+      "row_count": 216,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/ics_chart_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 71980,
+      "sha256": "8a3b644a02467b4bf9b82a02d93eeeef28ec5fdd6e8c1be3ce8f2dee0e7b10f3",
+      "row_count": 122,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/ics_chart_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 98304,
+      "sha256": "3d97cdee933655678fd70f63a4174de2f71cca2e3595e76c69e372c897bcef29",
+      "row_count": 122,
+      "sqlite_tables": {
+        "ics_chart_uby": 122
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/ics_chart_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1263,
+      "sha256": "8eaec0a1b2b79eaf8bcc8f4bb765ab84ef9790d41998b33636b4a934ee0dcb6d",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "attribution",
+        "dataset",
+        "license",
+        "model_version",
+        "outputs",
+        "record_count",
+        "rounding_rule",
+        "source_file",
+        "source_repository",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/nasa_exoplanet_archive_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 776067,
+      "sha256": "93ba6787ad704bc01d3608fcf1cf1373d2a58c3e8b2ab58fdd5a081bd4037472",
+      "row_count": 1169,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/nasa_exoplanet_archive_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 897024,
+      "sha256": "6b859f7e7599ee09cd5a69a9df47e3ecff8c4ae4ab31d20297f9016c05c8216a",
+      "row_count": 1169,
+      "sqlite_tables": {
+        "nasa_exoplanet_archive_uby": 1169
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/nasa_exoplanet_archive_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1440,
+      "sha256": "1a620b504e8410876e643594a69fa846446e5ca42c135eefb05d86da8b006e48",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "dataset",
+        "discovery_year_max",
+        "discovery_year_min",
+        "model_version",
+        "outputs",
+        "record_count",
+        "rounding_rule",
+        "source_api",
+        "source_file",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/nasa_jpl_cneos_fireballs_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 638082,
+      "sha256": "8e15a6e14843ae8e38abeccc7716c21b1964b8bdac6cf4e42f7037edf9e13125",
+      "row_count": 1064,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/nasa_jpl_cneos_fireballs_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 819200,
+      "sha256": "ee748f0aa767c17ab9aa49c027a1d0baaaa7fcbb58ed37e203728b314a0b8498",
+      "row_count": 1064,
+      "sqlite_tables": {
+        "nasa_jpl_cneos_fireballs_uby": 1064
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/nasa_jpl_cneos_fireballs_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1546,
+      "sha256": "19d8e1b0f87d66dbc7fdff42262894c8aef1d8e9214dc0727ce23700518ef0d5",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "dataset",
+        "generated_by",
+        "model_version",
+        "outputs",
+        "record_count",
+        "rounding_rule",
+        "source_api",
+        "source_file_csv",
+        "source_file_json",
+        "source_time_max_utc",
+        "source_time_min_utc",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/pbdb_animalia_phanerozoic_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 1061117332,
+      "sha256": "8afd5464e428b0731001f74cd3516a29b519159431b6357aa9a064fa03121cf8",
+      "row_count": 1348072,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_animalia_phanerozoic_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 1265094656,
+      "sha256": "c8d02843e3c1a0b448b6f1055070a93d1ee0e8e739189f025f6c20001f2e13c2",
+      "row_count": 1348072,
+      "sqlite_tables": {
+        "pbdb_animalia_phanerozoic_uby": 1348072
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_animalia_phanerozoic_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 19355,
+      "sha256": "4d7bdeb01421d7c9890ab7ed32c9c5c462ebaf3b96952de48e7938e9c0b4ebc5",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "build_performance",
+        "dataset",
+        "duplicate_records",
+        "model_version",
+        "outputs",
+        "precision_counts",
+        "raw_rows",
+        "record_count",
+        "rounding_rule",
+        "skipped_records",
+        "source_api",
+        "source_file_count",
+        "source_files",
+        "top_class_counts",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/pbdb_collections_animalia_phanerozoic_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 219613080,
+      "sha256": "80fe3e750b95f1a552a0cc9231f871ef3bddeb3d5877562efc778985348a21f3",
+      "row_count": 180000,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_collections_animalia_phanerozoic_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 268775424,
+      "sha256": "5dde242f98222c7ff5adbfcb6ded36f5009fc4c6b8a1054935f06e2d8569780e",
+      "row_count": 180000,
+      "sqlite_tables": {
+        "pbdb_collections_animalia_phanerozoic_uby": 180000
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_collections_animalia_phanerozoic_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 8379,
+      "sha256": "c72e7f6e15f787c9c6e8552198785bb5f650a6426644dbcbd90bfc375bb2285f",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "build_performance",
+        "dataset",
+        "duplicate_records",
+        "model_version",
+        "outputs",
+        "precision_counts",
+        "raw_rows",
+        "record_count",
+        "rounding_rule",
+        "scientific_use",
+        "skipped_records",
+        "source_api",
+        "source_file_count",
+        "source_files",
+        "top_country_counts",
+        "top_environment_counts",
+        "top_research_group_counts",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/pbdb_dinosauria_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 73949,
+      "sha256": "86c76bf0370f47d555efc1c95b155521ce2caafc8c2dcc5c30cc5f9697427e56",
+      "row_count": 94,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_dinosauria_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 98304,
+      "sha256": "382e99fc29faa82a7f86a3bad5b9b73c70bc68a0e73030450624e2fc4f182b9f",
+      "row_count": 94,
+      "sqlite_tables": {
+        "pbdb_dinosauria_uby": 94
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_dinosauria_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1189,
+      "sha256": "ca1f775dd8f70d82fbdd6da1b354a520232dc87cda50a06bc18315bc17c1584c",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "dataset",
+        "model_version",
+        "outputs",
+        "record_count",
+        "rounding_rule",
+        "source_api",
+        "source_file",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/pbdb_extinction_dynamics.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 55472128,
+      "sha256": "fd9cd20fa33a9b61965968f966ed89a20e81f243310f97949598e65dddf73115",
+      "row_count": 204424,
+      "sqlite_tables": {
+        "pbdb_extinction_intensity_by_bin": 535,
+        "pbdb_recovery_lag": 6,
+        "pbdb_taxon_disappearances": 8683,
+        "pbdb_taxon_ranges": 195194,
+        "reference_mass_extinctions": 6
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_extinction_dynamics_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 11267,
+      "sha256": "8972600251a5a60ef7b9564f9d2ef506c738f87d8b200ead5c857e39af8beb1b",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "disappearances_by_event",
+        "generated_by",
+        "method_summary",
+        "outputs",
+        "recovery_lag",
+        "research_status",
+        "source_pbdb_uby_csv",
+        "top_extinction_hotspots",
+        "uby_model",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/pbdb_extinction_intensity_by_bin.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 54581,
+      "sha256": "c2acf91a5958f41fd8de6cf848936373ac8a457c5ff3145aa42503eb5e5ddc87",
+      "row_count": 535,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_recovery_lag.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 1800,
+      "sha256": "1bad17084b7b802248adb6fd9b4779ff5ee5b41e60dd8310182eba0f23b62da2",
+      "row_count": 6,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_taxon_disappearances.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 2060269,
+      "sha256": "96084d30614019a45ddeb1ca5d0feec253da68ea9390519928c925de68a4cfd9",
+      "row_count": 8683,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/pbdb_taxon_ranges.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 35217914,
+      "sha256": "4938557a1d0a061a2e6d84e9cec6c354598c0dcb46866106f52c38b516cf9be1",
+      "row_count": 195194,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/processed_datasets_conformance_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1519,
+      "sha256": "0a8503df9c19498256441c5a7eebbf0c45477a35a37f65d1e3b1ebbfd4cad179",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "datasets",
+        "generated_by",
+        "records_per_second",
+        "report_type",
+        "total_errors",
+        "total_records",
+        "total_warnings",
+        "wall_seconds"
+      ]
+    },
+    {
+      "path": "data/processed/simbad_high_redshift_objects_uby.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 4179565,
+      "sha256": "78f52f35d3934b2e078c17acfdc79a3eb2e5ce5383255ba897519936edbf6f1e",
+      "row_count": 5000,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/simbad_high_redshift_objects_uby.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 5267456,
+      "sha256": "9db7bc20a7473713a474436fbffc7e74192918b97ae4aefa03bd4748f41686c4",
+      "row_count": 5000,
+      "sqlite_tables": {
+        "simbad_high_redshift_objects_uby": 5000
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/simbad_high_redshift_objects_uby_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 1762,
+      "sha256": "006ba9be097c65e2c280653ebd582568e9dc74ec15acfa35803a377878546731",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "dataset",
+        "model_version",
+        "outputs",
+        "record_count",
+        "redshift_max",
+        "redshift_min",
+        "rounding_rule",
+        "selection",
+        "source_api",
+        "source_database",
+        "source_file",
+        "source_provider",
+        "source_reference",
+        "source_reference_uri",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/uby_forcing_events.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 10273,
+      "sha256": "8b6744225fb6e561157367484d18ceecb6b9fdf563386845216759524dc4742e",
+      "row_count": 24,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_forcing_events.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 45056,
+      "sha256": "4bf4051043caf60493bfae72215406cce0e6e69d8c8bc12c569138d4039c5d05",
+      "row_count": 24,
+      "sqlite_tables": {
+        "forcing_events": 24
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_forcing_events_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 2280,
+      "sha256": "d65b4f413efc08291be15f52a00d46e8ea20a9ebd37e2e3bb2c15452ef9a21c2",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "generated_by",
+        "outputs",
+        "research_status",
+        "source_policy",
+        "uby_model",
+        "uby_version"
+      ]
+    },
+    {
+      "path": "data/processed/uby_forcing_extinction_leadlag.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 55541760,
+      "sha256": "68008ac3595239b8d1c8e194df7647effce43ef80d5c838b587feb2a0cb24ad4",
+      "row_count": 204459,
+      "sqlite_tables": {
+        "forcing_events": 24,
+        "forcing_extinction_leadlag_pairs": 11,
+        "pbdb_extinction_intensity_by_bin": 535,
+        "pbdb_recovery_lag": 6,
+        "pbdb_taxon_disappearances": 8683,
+        "pbdb_taxon_ranges": 195194,
+        "reference_mass_extinctions": 6
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_forcing_extinction_leadlag_pairs.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 4974,
+      "sha256": "4e46573cc33a977904aa5dfd34d37cf053ae24e95c2dae0b218adb7cf469be78",
+      "row_count": 11,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_forcing_extinction_leadlag_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 8527,
+      "sha256": "da4128194246be40ce85728a209e58697012e369cb1f49c10fd1780855d8767d",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "forcing_extinction_lag_summary",
+        "generated_by",
+        "inputs",
+        "nearest_forcing_by_extinction",
+        "outputs",
+        "research_status",
+        "uby_version",
+        "window_years"
+      ]
+    },
+    {
+      "path": "data/processed/uby_mass_extinction_lag.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 1025552384,
+      "sha256": "bd95cc1646c4a997908342cf1f2b4b7ae2973d4aeb6e8e9a4eb077ae02a704f0",
+      "row_count": 1373249,
+      "sqlite_tables": {
+        "extinction_events": 6,
+        "extinction_forcing_pairs": 8,
+        "forcing_events": 8,
+        "uby_events": 1373227
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_mass_extinction_lag_pairs.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 2578,
+      "sha256": "b91dbf979e4b6e111d4e98c21b491fb1e52e52b7009d2b5a80e5e6462b305836",
+      "row_count": 8,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_mass_extinction_lag_report.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 5983,
+      "sha256": "53908493427e2e4f7ac6959e43657f4218f2f3e952b520424895eac493f25d15",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "claim_boundary",
+        "counts",
+        "database",
+        "description",
+        "direction_counts",
+        "forcing_summary",
+        "generated_by",
+        "nearest_pairs",
+        "outputs",
+        "research_status",
+        "source_unified_database",
+        "uby_version",
+        "window_years"
+      ]
+    },
+    {
+      "path": "data/processed/uby_unified_timeline.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 779938931,
+      "sha256": "7008b0265cb7eb642afaa961fe2b147e52d5de62de0bcc2d5edbbc6bfe5fedbd",
+      "row_count": 1379280,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_unified_timeline.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 1030230016,
+      "sha256": "0c5189309f56b68817abda58ef44b4f485042673c8fdeee939a8612ea2f0b0e0",
+      "row_count": 1379280,
+      "sqlite_tables": {
+        "uby_events": 1379280
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/uby_unified_timeline_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 3223,
+      "sha256": "86416bdd319ec92aebe63f8838f58673f5c53f7b00426ebf5f4a66ae9bc410d3",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "build_performance",
+        "category_counts",
+        "core_query_examples",
+        "database",
+        "description",
+        "event_count",
+        "generated_by",
+        "main_table",
+        "notes",
+        "outputs",
+        "precision_counts",
+        "source_counts",
+        "uby_version",
+        "views"
+      ]
+    },
+    {
+      "path": "data/processed/usgs_earthquakes_uby_benchmark.csv",
+      "release_role": "tabular_dataset",
+      "format": "csv",
+      "size_bytes": 17207951,
+      "sha256": "cb713a65dfbb1bc35c2f31d69fd1b3266a17ecca9f433b306aa3728735ca2d54",
+      "row_count": 23756,
+      "sqlite_tables": null,
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/usgs_earthquakes_uby_benchmark.sqlite",
+      "release_role": "sqlite_database",
+      "format": "sqlite",
+      "size_bytes": 21700608,
+      "sha256": "712b4e5b064ced13076c1c1e28aecd096c97dbd94b9522fed28d84ff7e4449bf",
+      "row_count": 23756,
+      "sqlite_tables": {
+        "usgs_earthquakes_uby_benchmark": 23756
+      },
+      "json_top_level_keys": null
+    },
+    {
+      "path": "data/processed/usgs_earthquakes_uby_benchmark_metadata.json",
+      "release_role": "metadata_or_report",
+      "format": "json",
+      "size_bytes": 2029,
+      "sha256": "27f4caeb4c935c67038d9596c26013892169ba9b8c2f3d8220018e2351990bb6",
+      "row_count": null,
+      "sqlite_tables": null,
+      "json_top_level_keys": [
+        "anchor",
+        "benchmark",
+        "dataset",
+        "first_source_time_utc",
+        "first_uby_value",
+        "generated_by",
+        "last_source_time_utc",
+        "last_uby_value",
+        "max_uby_value",
+        "min_uby_value",
+        "model_version",
+        "outputs",
+        "record_count",
+        "rounding_rule",
+        "skipped_count",
+        "source_file",
+        "source_size_bytes",
+        "uby_annotation_principles",
+        "uby_version"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "title": "UBY Time Python reference implementation and dataset processing workflow",
+  "upload_type": "software",
+  "description": "Python reference implementation and reproducible processing workflow for the UBY cross-scale time labeling dataset.",
+  "creators": [
+    {
+      "name": "Han, Bo",
+      "affiliation": "UBY Specification Project",
+      "orcid": ""
+    }
+  ],
+  "version": "0.1.0",
+  "license": "bsd-3-clause",
+  "keywords": [
+    "UBY",
+    "time labeling",
+    "Python",
+    "scientific data",
+    "reproducibility"
+  ]
+}

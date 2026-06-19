@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uby-time.org/schemas/uby-dataset-profile-wd-0.1.0.schema.json",
+  "title": "UBY Dataset Profile and Annotated Dataset Record",
+  "description": "JSON Schema for dataset-level UBY conformance profiles and UBY-annotated dataset records aligned with UBY Cross-scale Time Labeling Specification Working Draft 0.1.0.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/datasetProfile"
+    },
+    {
+      "$ref": "#/$defs/annotatedDatasetRecord"
+    }
+  ],
+  "$defs": {
+    "decimalString": {
+      "type": "string",
+      "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "nonNegativeDecimalString": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "specVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "modelVersion": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$"
+    },
+    "precisionLevel": {
+      "type": "string",
+      "enum": ["Level 1", "Level 2", "Level 3"]
+    },
+    "uri": {
+      "type": "string",
+      "pattern": "^https?://.+$"
+    },
+    "fieldName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "fieldNameArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fieldName"
+      },
+      "uniqueItems": true
+    },
+    "precisionLevelArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/precisionLevel"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "datasetProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "name",
+        "authority",
+        "source_uri",
+        "event_type",
+        "allowed_precision_levels",
+        "required_fields",
+        "recommended_fields",
+        "source_time_fields",
+        "representative_time_rule",
+        "uncertainty_policy",
+        "provenance_policy",
+        "model_policy",
+        "requires_model_version",
+        "requires_uncertainty_or_interval",
+        "uby_version"
+      ],
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "pattern": "^UBY-DATASET-[A-Z0-9-]+-WD-[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "event_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "allowed_precision_levels": {
+          "$ref": "#/$defs/precisionLevelArray"
+        },
+        "required_fields": {
+          "$ref": "#/$defs/fieldNameArray"
+        },
+        "recommended_fields": {
+          "$ref": "#/$defs/fieldNameArray"
+        },
+        "source_time_fields": {
+          "$ref": "#/$defs/fieldNameArray"
+        },
+        "representative_time_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uncertainty_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requires_model_version": {
+          "type": "boolean"
+        },
+        "requires_uncertainty_or_interval": {
+          "type": "boolean"
+        },
+        "uby_version": {
+          "$ref": "#/$defs/specVersion"
+        }
+      }
+    },
+    "annotatedDatasetRecord": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "dataset_profile_id",
+        "source_dataset",
+        "source_record_id",
+        "event_label",
+        "event_type",
+        "uby_value",
+        "uby_expression",
+        "uby_version",
+        "precision_level",
+        "anchor_id",
+        "anchor_jd",
+        "anchor_uby",
+        "rounding_rule",
+        "generated_by",
+        "attribution"
+      ],
+      "properties": {
+        "dataset_profile_id": {
+          "type": "string",
+          "pattern": "^UBY-DATASET-[A-Z0-9-]+-WD-[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "source_dataset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_record_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_record_uri": {
+          "type": ["string", "null"]
+        },
+        "event_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "source_time": {
+          "type": ["string", "null"]
+        },
+        "source_system": {
+          "type": ["string", "null"]
+        },
+        "uby_value": {
+          "$ref": "#/$defs/nonNegativeDecimalString"
+        },
+        "uby_expression": {
+          "type": "string",
+          "pattern": "^UBY .+"
+        },
+        "uby_magnitude_expression": {
+          "type": ["string", "null"]
+        },
+        "uby_version": {
+          "$ref": "#/$defs/specVersion"
+        },
+        "model_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/modelVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "precision_level": {
+          "$ref": "#/$defs/precisionLevel"
+        },
+        "anchor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "anchor_jd": {
+          "$ref": "#/$defs/decimalString"
+        },
+        "anchor_uby": {
+          "$ref": "#/$defs/nonNegativeDecimalString"
+        },
+        "rounding_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generated_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uncertainty_years": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/nonNegativeDecimalString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence_level": {
+          "type": ["string", "null"],
+          "pattern": "^(?:0(?:\\.[0-9]+)?|1(?:\\.0+)?)$"
+        },
+        "interval_start_uby": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/nonNegativeDecimalString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "interval_end_uby": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/nonNegativeDecimalString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "uncertainty_kind": {
+          "type": ["string", "null"],
+          "enum": [
+            "measurement",
+            "temporal_resolution",
+            "interval",
+            "model",
+            "observational",
+            "propagated",
+            "propagated_addition",
+            "propagated_multiplication",
+            null
+          ]
+        },
+        "propagation_note": {
+          "type": ["string", "null"]
+        },
+        "validation_messages": {
+          "type": ["string", "null"]
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "profile_id": "UBY-DATASET-USGS-EARTHQUAKE-WD-0.1.0",
+      "name": "USGS Earthquake Catalog UTC event-time UBY annotation profile",
+      "authority": "U.S. Geological Survey",
+      "source_uri": "https://earthquake.usgs.gov/fdsnws/event/1/",
+      "event_type": "earthquake_event_time",
+      "allowed_precision_levels": ["Level 1"],
+      "required_fields": [
+        "source_dataset",
+        "source_record_id",
+        "source_time_utc",
+        "event_label",
+        "event_type",
+        "precision_level",
+        "uby_value",
+        "uby_expression",
+        "uby_version",
+        "anchor_id",
+        "anchor_jd",
+        "anchor_uby",
+        "rounding_rule",
+        "generated_by",
+        "latitude",
+        "longitude",
+        "magnitude",
+        "attribution"
+      ],
+      "recommended_fields": [
+        "depth_km",
+        "magnitude_type",
+        "place",
+        "usgs_type",
+        "status",
+        "location_source",
+        "magnitude_source",
+        "updated_time_utc",
+        "validation_messages"
+      ],
+      "source_time_fields": ["source_time_utc"],
+      "representative_time_rule": "Use the USGS UTC event timestamp directly as a Level 1 source time.",
+      "uncertainty_policy": "Do not invent temporal uncertainty when the source CSV does not provide it.",
+      "provenance_policy": "Preserve USGS event id, UTC time, spatial fields, magnitude, event page URI, and attribution.",
+      "model_policy": "No cosmological model is required for near-present UTC event labels.",
+      "requires_model_version": false,
+      "requires_uncertainty_or_interval": false,
+      "uby_version": "0.1.0"
+    }
+  ]
+}

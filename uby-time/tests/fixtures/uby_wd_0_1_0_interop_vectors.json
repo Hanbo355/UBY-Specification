@@ -1,0 +1,157 @@
+[
+  {
+    "id": "iso-anchor-2026-01-01",
+    "kind": "iso",
+    "source_time": "2026-01-01T00:00:00Z",
+    "expected_jd": "2461041.5",
+    "expected_uby_value": "13787002026.0",
+    "expected_expression": "UBY 13787002026.0 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0"
+  },
+  {
+    "id": "iso-before-anchor-2000-01-01",
+    "kind": "iso",
+    "source_time": "2000-01-01T00:00:00Z",
+    "expected_jd": "2451544.5",
+    "expected_uby_value": "13787001999.99863107460643395",
+    "expected_expression": "UBY 13787001999.99863107460643395 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0"
+  },
+  {
+    "id": "astronomical-year-0001",
+    "kind": "astronomical_year",
+    "astronomical_year": 1,
+    "expected_uby_value": "13787000001",
+    "expected_mnemonic": "UBY 137870+000001 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0"
+  },
+  {
+    "id": "astronomical-year-zero",
+    "kind": "astronomical_year",
+    "astronomical_year": 0,
+    "expected_uby_value": "13787000000",
+    "expected_mnemonic": "UBY 137870+000000 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0"
+  },
+  {
+    "id": "bc-0221",
+    "kind": "bc_year",
+    "bc_year": 221,
+    "astronomical_year": -220,
+    "expected_uby_value": "13786999780",
+    "expected_mnemonic": "UBY 137870-000220 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0"
+  },
+  {
+    "id": "full-numeric-with-model-and-spec",
+    "kind": "expression",
+    "expression": "UBY 13787002026.0 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "13787002026.0",
+    "expected_notation": "full-numeric",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": []
+  },
+  {
+    "id": "magnitude-cmb",
+    "kind": "expression",
+    "expression": "UBY 380K [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "380000",
+    "expected_notation": "magnitude",
+    "expected_precision_level": "Level 2",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": ["MAGNITUDE_NOT_FOR_STORAGE"]
+  },
+  {
+    "id": "scientific-cmb",
+    "kind": "expression",
+    "expression": "UBY 3.8×10^5 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "380000.0",
+    "expected_notation": "scientific",
+    "expected_precision_level": "Level 2",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": ["SIGNIFICANT_DIGITS_UNDECLARED"]
+  },
+  {
+    "id": "scientific-ascii-x",
+    "kind": "expression",
+    "expression": "UBY 1.0x10^12 [model=Scenario-FutureA] [spec=0.1.0]",
+    "expected_uby_value": "1000000000000.0",
+    "expected_notation": "scientific",
+    "expected_precision_level": "Level 2",
+    "expected_model_version": "Scenario-FutureA",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": ["SIGNIFICANT_DIGITS_UNDECLARED"]
+  },
+  {
+    "id": "academic-mnemonic-ad-2026",
+    "kind": "expression",
+    "expression": "UBY 137870+002026 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "13787002026",
+    "expected_notation": "academic-mnemonic",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": [],
+    "expected_mnemonic_prefix": 137870
+  },
+  {
+    "id": "friendly-mnemonic-bc-221",
+    "kind": "expression",
+    "expression": "UBY 137870 BC221 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "13786999780",
+    "expected_notation": "friendly-mnemonic",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": [],
+    "expected_mnemonic_prefix": 137870
+  },
+  {
+    "id": "missing-spec-warning",
+    "kind": "expression",
+    "expression": "UBY 380K [model=LCDM-Planck2018]",
+    "expected_uby_value": "380000",
+    "expected_notation": "magnitude",
+    "expected_precision_level": "Level 2",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": null,
+    "expected_warnings": ["SPEC_VERSION_UNDECLARED", "MAGNITUDE_NOT_FOR_STORAGE"]
+  },
+  {
+    "id": "model-required-warning",
+    "kind": "expression",
+    "expression": "UBY 380K [spec=0.1.0]",
+    "expected_uby_value": "380000",
+    "expected_notation": "magnitude",
+    "expected_precision_level": "Level 2",
+    "expected_model_version": null,
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": ["MODEL_VERSION_REQUIRED", "MAGNITUDE_NOT_FOR_STORAGE"]
+  },
+  {
+    "id": "mnemonic-model-mismatch",
+    "kind": "expression",
+    "expression": "UBY 137720+002026 [model=LCDM-Planck2018] [spec=0.1.0]",
+    "expected_uby_value": "13772002026",
+    "expected_notation": "academic-mnemonic",
+    "expected_precision_level": "Level 1",
+    "expected_model_version": "LCDM-Planck2018",
+    "expected_uby_version": "0.1.0",
+    "expected_warnings": ["MNEMONIC_MODEL_MISMATCH"],
+    "expected_mnemonic_prefix": 137720
+  }
+]

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "uby-time"
+version = "0.1.0"
+description = "Python reference implementation for the UBY Cross-scale Time Labeling Specification"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+authors = [
+  { name = "Han Bo" },
+  { name = "UBY Specification Contributors" }
+]
+keywords = ["time", "chronology", "cosmology", "julian-date", "UBY"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed"
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/uby-spec/uby-time"
+Documentation = "https://uby-spec.github.io/uby-time/"
+Repository = "https://github.com/uby-spec/uby-time"
+Issues = "https://github.com/uby-spec/uby-time/issues"
+Changelog = "https://github.com/uby-spec/uby-time/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+cosmology = ["astropy>=5.3"]
+pandas = ["pandas>=2.0"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "build", "twine"]
+docs = ["mkdocs", "mkdocs-material"]
+
+[project.scripts]
+uby = "uby_time.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uby_time"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-m", "not slow and not data"]
+markers = [
+  "slow: long-running tests that are excluded from the default test run",
+  "data: tests that require or process real datasets and are excluded from the default test run",
+  "integration: end-to-end integration tests that exercise example pipelines or generated artifacts"
+]

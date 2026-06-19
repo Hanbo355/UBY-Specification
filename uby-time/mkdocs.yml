@@ -1,0 +1,13 @@
+site_name: uby-time
+site_description: Python reference implementation for the UBY Cross-scale Time Labeling Specification
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - CLI: cli.md
+  - Precision: precision.md
+  - API Reference: api-reference.md
+  - Interoperability: interoperability.md
+  - Scientific Discovery Use Case: scientific-discovery-use-case.md
+  - Release: release.md

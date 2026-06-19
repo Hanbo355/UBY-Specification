@@ -1,0 +1,22 @@
+[
+  {
+    "name": "anchor_2026",
+    "source_system": "UTC/ISO8601",
+    "source_time": "2026-01-01T00:00:00Z",
+    "jd": "2461041.5",
+    "expected_uby": "13787002026.0",
+    "expected_full": "UBY 13787002026.0 [model=LCDM-Planck2018] [spec=0.1.0]"
+  },
+  {
+    "name": "astronomical_year_1",
+    "astronomical_year": 1,
+    "expected_uby": "13787000001",
+    "expected_mnemonic": "UBY 137870+000001 [model=LCDM-Planck2018] [spec=0.1.0]"
+  },
+  {
+    "name": "bc_221",
+    "astronomical_year": -220,
+    "expected_uby": "13786999780",
+    "expected_mnemonic": "UBY 137870-000220 [model=LCDM-Planck2018] [spec=0.1.0]"
+  }
+]

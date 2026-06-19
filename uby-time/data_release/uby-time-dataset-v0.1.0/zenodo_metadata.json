@@ -1,0 +1,59 @@
+{
+  "title": "UBY-labeled cross-scale temporal database for Phanerozoic fossil occurrences, forcing events, astronomical records, and mass-extinction dynamics",
+  "upload_type": "dataset",
+  "description": "A UBY-labeled, uncertainty-aware cross-scale temporal database integrating Paleobiology Database fossil occurrences and collections, chronostratigraphic records, astronomical records, Earth event benchmarks, forcing events, and derived mass-extinction dynamics. The dataset includes CSV, SQLite, and JSON outputs plus checksums, manifest, data dictionary, and quality-control reports.",
+  "creators": [
+    {
+      "name": "Han, Bo",
+      "affiliation": "UBY Specification Project",
+      "orcid": ""
+    }
+  ],
+  "version": "0.1.0",
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "keywords": [
+    "UBY",
+    "time labeling",
+    "cross-scale time",
+    "Paleobiology Database",
+    "mass extinction",
+    "Phanerozoic",
+    "chronostratigraphy",
+    "uncertainty",
+    "SQLite",
+    "scientific data"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://paleobiodb.org",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://exoplanetarchive.ipac.caltech.edu",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://earthquake.usgs.gov",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://simbad.cds.unistra.fr",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    }
+  ],
+  "notes": "UBY labels are auxiliary time indices. Users must preserve and interpret the source time fields and uncertainty metadata. Geological fossil occurrence midpoints must not be treated as exact event times.",
+  "communities": [],
+  "references": [
+    "Paleobiology Database, https://paleobiodb.org",
+    "NASA Exoplanet Archive, https://exoplanetarchive.ipac.caltech.edu",
+    "USGS Earthquake Hazards Program, https://earthquake.usgs.gov",
+    "SIMBAD astronomical database, CDS, Strasbourg, https://simbad.cds.unistra.fr"
+  ],
+  "file_count": 56,
+  "total_size_bytes": 5850959685
+}

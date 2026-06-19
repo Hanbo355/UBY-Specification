@@ -1,0 +1,51 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+.venv-*/
+venv/
+env/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Editor / OS files
+.DS_Store
+.vscode/
+.idea/
+
+# Logs and transient command output
+*.log
+*_output.txt
+*_run_output.txt
+*_pytest_output.txt
+spec_lint_result.txt
+test_real_spec_lint_output.txt
+
+# Large raw and processed datasets should be archived on Zenodo, not committed
+# directly to GitHub. The reproducible scripts, schemas, docs, tests, and
+# data_release metadata remain tracked.
+data/raw/
+data/processed/
+
+# SQLite sidecar files
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+
+# Keep Zenodo/GitHub release metadata under version control.
+!data_release/
+!data_release/**
+!.zenodo.json

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uby-time.org/schemas/uby-time-wd-0.1.0.schema.json",
+  "title": "UBY Time JSON Record",
+  "description": "JSON Schema for JSON-safe UBYTime records emitted by uby-time 0.1.0, aligned with UBY Cross-scale Time Labeling Specification Working Draft 0.1.0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "uby_value",
+    "uby_version",
+    "model_version",
+    "precision_level",
+    "source_time",
+    "source_system",
+    "rounding_rule",
+    "generated_by",
+    "anchor_id",
+    "anchor_jd",
+    "anchor_uby",
+    "uncertainty_years",
+    "confidence_level",
+    "interval_start_uby",
+    "interval_end_uby",
+    "uncertainty_kind",
+    "propagation_note"
+  ],
+  "properties": {
+    "uby_value": {
+      "$ref": "#/$defs/nonNegativeDecimalString",
+      "description": "UBY value in years since the Big Bang reference epoch. Serialized as a decimal string to avoid JSON floating point precision loss."
+    },
+    "uby_version": {
+      "$ref": "#/$defs/specVersion",
+      "description": "UBY specification version used to produce this record."
+    },
+    "model_version": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/modelVersion"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Cosmological model identifier. Required by validation policy for Level 2 and Level 3 records, but nullable at schema level for Level 1 records and partially specified interchange data."
+    },
+    "precision_level": {
+      "type": "string",
+      "enum": ["Level 1", "Level 2", "Level 3"],
+      "description": "UBY precision zone."
+    },
+    "source_time": {
+      "type": ["string", "null"],
+      "description": "Original source time value, such as an ISO 8601 timestamp, Julian Date, astronomical year, BC year, or redshift."
+    },
+    "source_system": {
+      "type": ["string", "null"],
+      "description": "Source time system name, such as ISO8601, JulianDate, AstronomicalYear, HistoricalBC, or CosmologicalRedshift."
+    },
+    "rounding_rule": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Rounding or quantization rule used when producing the UBY value."
+    },
+    "generated_by": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Implementation identifier that generated this record."
+    },
+    "anchor_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the Level 1 anchor used for civil-time alignment."
+    },
+    "anchor_jd": {
+      "$ref": "#/$defs/decimalString",
+      "description": "Julian Date of the anchor, serialized as a decimal string."
+    },
+    "anchor_uby": {
+      "$ref": "#/$defs/nonNegativeDecimalString",
+      "description": "UBY value of the anchor, serialized as a decimal string."
+    },
+    "uncertainty_years": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/nonNegativeDecimalString"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional uncertainty width in years."
+    },
+    "confidence_level": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/confidenceDecimalString"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional confidence level in the closed interval [0, 1], serialized as a decimal string."
+    },
+    "interval_start_uby": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/nonNegativeDecimalString"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional lower bound of a UBY interval."
+    },
+    "interval_end_uby": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/nonNegativeDecimalString"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional upper bound of a UBY interval."
+    },
+    "uncertainty_kind": {
+      "type": ["string", "null"],
+      "description": "Optional uncertainty interpretation, such as symmetric, interval, model, observational, or propagated."
+    },
+    "propagation_note": {
+      "type": ["string", "null"],
+      "description": "Optional note describing conversion path, model assumptions, or uncertainty propagation."
+    }
+  },
+  "$defs": {
+    "decimalString": {
+      "type": "string",
+      "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "nonNegativeDecimalString": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "confidenceDecimalString": {
+      "type": "string",
+      "pattern": "^(?:0(?:\\.[0-9]+)?|1(?:\\.0+)?)$"
+    },
+    "specVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "modelVersion": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$"
+    },
+    "ubyExpression": {
+      "type": "string",
+      "pattern": "^UBY .+(?: \\[model=[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+\\])?(?: \\[spec=[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?\\])?$",
+      "description": "Loose expression-level pattern for interchange metadata. Full parsing is performed by the reference parser, not by this record schema."
+    }
+  },
+  "examples": [
+    {
+      "uby_value": "13787002026.0",
+      "uby_version": "0.1.0",
+      "model_version": "LCDM-Planck2018",
+      "precision_level": "Level 1",
+      "source_time": "2026-01-01T00:00:00Z",
+      "source_system": "ISO8601",
+      "rounding_rule": "year-floor",
+      "generated_by": "uby-time/0.1.0",
+      "anchor_id": "UBY-ANCHOR-2026-01-01Z",
+      "anchor_jd": "2461041.5",
+      "anchor_uby": "13787002026.0",
+      "uncertainty_years": null,
+      "confidence_level": null,
+      "interval_start_uby": null,
+      "interval_end_uby": null,
+      "uncertainty_kind": null,
+      "propagation_note": "iso_to_uby converter=stdlib-datetime; stdlib fallback is not intended for leap-second-sensitive timing"
+    }
+  ]
+}
