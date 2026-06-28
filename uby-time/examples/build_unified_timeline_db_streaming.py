@@ -40,10 +40,13 @@ METADATA_OUT = PROCESSED_DIR / "uby_unified_timeline_metadata.json"
 ICS_CSV = PROCESSED_DIR / "ics_chart_uby.csv"
 PBDB_CSV = PROCESSED_DIR / "pbdb_dinosauria_uby.csv"
 PBDB_ANIMALIA_CSV = PROCESSED_DIR / "pbdb_animalia_phanerozoic_uby.csv"
+PBDB_COLLECTIONS_CSV = PROCESSED_DIR / "pbdb_collections_animalia_phanerozoic_uby.csv"
 NASA_CSV = PROCESSED_DIR / "nasa_exoplanet_archive_uby.csv"
 USGS_CSV = PROCESSED_DIR / "usgs_earthquakes_uby_benchmark.csv"
 CNEOS_FIREBALLS_CSV = PROCESSED_DIR / "nasa_jpl_cneos_fireballs_uby.csv"
 SIMBAD_HIGH_REDSHIFT_CSV = PROCESSED_DIR / "simbad_high_redshift_objects_uby.csv"
+EXTERNAL_RECORDS_CSV = PROCESSED_DIR / "external_records_uby.csv"
+EXTERNAL_DATABASES_CSV = PROCESSED_DIR / "external_databases_uby.csv"
 
 SQLITE_BATCH_SIZE = 10000
 
@@ -423,6 +426,123 @@ def _usgs_events(start_id: int) -> Iterable[UnifiedTimelineEvent]:
         event_id += 1
 
 
+def _pbdb_collections_events(start_id: int) -> Iterable[UnifiedTimelineEvent]:
+    event_id = start_id
+    for row in _iter_csv(PBDB_COLLECTIONS_CSV):
+        source_dataset = _clean(row.get("source_dataset"))
+        min_ma = _clean(row.get("min_ma"))
+        max_ma = _clean(row.get("max_ma"))
+        collection_name = _clean(row.get("collection_name"))
+        interval = "–".join(part for part in (max_ma, min_ma) if part)
+        yield UnifiedTimelineEvent(
+            event_id=event_id,
+            event_name=_clean(row.get("event_label")) or collection_name,
+            event_category="paleontology",
+            event_subcategory="fossil_collection",
+            original_time_unit="ma_bp_interval",
+            original_time_value=_decimal_text(row.get("representative_ma_midpoint")),
+            original_error=_decimal_text(row.get("uncertainty_years")),
+            uby_value=_decimal_text(row.get("uby_value")),
+            uby_value_text=_decimal_text(row.get("uby_value")),
+            uby_model=_clean(row.get("model_version")) or "none",
+            uby_precision_level=_precision_int(row.get("precision_level")),
+            uby_precision_label=_clean(row.get("precision_level")),
+            uby_mnemonic_iso="",
+            source_dataset=source_dataset,
+            source_doi=_source_doi(source_dataset),
+            source_record_id=_clean(row.get("source_record_id")),
+            source_record_uri=_clean(row.get("source_record_uri")),
+            description=(
+                f"PBDB collection {collection_name}; interval={interval} Ma BP; "
+                f"environment={_clean(row.get('environment'))}; "
+                f"n_occs={_clean(row.get('n_occs'))}"
+            ),
+            attribution=_clean(row.get("attribution")),
+        )
+        event_id += 1
+
+
+def _external_records_events(start_id: int) -> Iterable[UnifiedTimelineEvent]:
+    event_id = start_id
+    for row in _iter_csv(EXTERNAL_RECORDS_CSV):
+        source_dataset = _clean(row.get("source_dataset"))
+        measured_value = _clean(row.get("measured_value"))
+        measured_unit = _clean(row.get("measured_value_unit"))
+        original_time = _clean(row.get("original_time_value"))
+        original_unit = _clean(row.get("original_time_unit"))
+        subcategory = _clean(row.get("event_subcategory"))
+        source_doi = _clean(row.get("source_doi"))
+        category = "paleoclimate" if _precision_int(row.get("precision_level")) == 2 else "instrumental"
+        yield UnifiedTimelineEvent(
+            event_id=event_id,
+            event_name=_clean(row.get("event_label")),
+            event_category=category,
+            event_subcategory=subcategory,
+            original_time_unit=original_unit,
+            original_time_value=original_time,
+            original_error=_decimal_text(row.get("uncertainty_years")),
+            uby_value=_decimal_text(row.get("uby_value")),
+            uby_value_text=_decimal_text(row.get("uby_value")),
+            uby_model=_clean(row.get("model_version")) or "none",
+            uby_precision_level=_precision_int(row.get("precision_level")),
+            uby_precision_label=_clean(row.get("precision_level")),
+            uby_mnemonic_iso="",
+            source_dataset=source_dataset,
+            source_doi=source_doi,
+            source_record_id=_clean(row.get("source_record_id")),
+            source_record_uri=_clean(row.get("source_record_uri")),
+            description=_clean(row.get("description")),
+            attribution=_clean(row.get("attribution")),
+        )
+        event_id += 1
+
+
+def _external_databases_events(start_id: int) -> Iterable[UnifiedTimelineEvent]:
+    """Stream the 4 newly-downloaded external databases into the unified DB."""
+    event_id = start_id
+    for row in _iter_csv(EXTERNAL_DATABASES_CSV):
+        source_dataset = _clean(row.get("source_dataset"))
+        original_time = _clean(row.get("original_time_value"))
+        original_unit = _clean(row.get("original_time_unit"))
+        subcategory = _clean(row.get("event_subcategory"))
+        precision_level = _precision_int(row.get("precision_level"))
+
+        # Map event_subcategory -> event_category
+        if source_dataset.startswith("Smithsonian"):
+            category = "geology"
+        elif source_dataset.startswith("NASA Exoplanet"):
+            category = "astronomy"
+        elif source_dataset.startswith("NOAA ITRDB"):
+            category = "paleoclimate"
+        elif source_dataset.startswith("Neotoma"):
+            category = "paleoecology"
+        else:
+            category = "external"
+
+        yield UnifiedTimelineEvent(
+            event_id=event_id,
+            event_name=_clean(row.get("event_label")),
+            event_category=category,
+            event_subcategory=subcategory,
+            original_time_unit=original_unit,
+            original_time_value=original_time,
+            original_error=_decimal_text(row.get("uncertainty_years")),
+            uby_value=_decimal_text(row.get("uby_value")),
+            uby_value_text=_decimal_text(row.get("uby_value")),
+            uby_model=_clean(row.get("model_version")) or "none",
+            uby_precision_level=precision_level,
+            uby_precision_label=_clean(row.get("precision_level")),
+            uby_mnemonic_iso="",
+            source_dataset=source_dataset,
+            source_doi="",
+            source_record_id=_clean(row.get("source_record_id")),
+            source_record_uri=_clean(row.get("source_record_uri")),
+            description=_clean(row.get("description")),
+            attribution=_clean(row.get("attribution")),
+        )
+        event_id += 1
+
+
 def _create_sqlite(conn: sqlite3.Connection) -> None:
     conn.execute(
         """
@@ -514,9 +634,12 @@ def build_outputs() -> dict[str, object]:
         _ics_events,
         _pbdb_dinosauria_events,
         _pbdb_animalia_events,
+        _pbdb_collections_events,
         _nasa_events,
         _cneos_fireball_events,
         _usgs_events,
+        _external_records_events,
+        _external_databases_events,
     )
 
     with CSV_OUT.open("w", encoding="utf-8-sig", newline="") as csv_file, sqlite3.connect(SQLITE_OUT) as conn:

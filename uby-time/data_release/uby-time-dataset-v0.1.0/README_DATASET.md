@@ -11,16 +11,21 @@ The release includes:
 
 - PBDB Animalia / Phanerozoic fossil occurrence UBY annotations.
 - PBDB collection-level UBY annotations for sampling-control analyses.
+- PBDB Dinosauria UBY annotations.
 - ICS chronostratigraphic chart UBY annotations.
 - NASA Exoplanet Archive discovery-time annotations.
-- NASA/JPL CNEOS fireball time annotations.
+- NASA/JPL CNEOS fireball event annotations.
 - SIMBAD high-redshift object UBY annotations.
 - USGS earthquake benchmark annotations.
+- External-database UBY cross-reference records.
 - A unified cross-domain UBY timeline.
-- PBDB-derived extinction dynamics.
-- Forcing-event compilation and forcing-extinction lead-lag tables.
-- End-Ordovician focused signal and sampling-control outputs.
-- Sensitivity-analysis outputs for bin size, taxonomic level, and disappearance window.
+- A forcing-event compilation.
+
+Intermediate analytical artefacts (end-Ordovician signal extractions,
+extinction-sensitivity sweeps, mass-extinction lead/lag databases, periodogram
+reports, diversity curves, etc.) are deliberately excluded from the deposition:
+they remain fully reproducible from the source datasets and the scripts in
+`examples/`.
 
 ## Release identity
 
@@ -28,8 +33,8 @@ The release includes:
 - UBY software/specification version: `0.1.0`
 - Recommended data license: Creative Commons Attribution 4.0 International (`CC-BY-4.0`)
 - Code license: BSD 3-Clause, as specified in `LICENSE`
-- Total archived processed-file size: 5,850,959,685 bytes
-- Number of processed files in manifest: 56
+- Total archived processed-file size: 6,227,938,001 bytes
+- Number of processed files in manifest: 37
 
 ## Important scientific boundary
 
@@ -48,12 +53,12 @@ biological extinction or origination times.
 If this dataset is used, cite the Zenodo DOI assigned to this release and cite
 the original data providers listed in `LICENSES_AND_ATTRIBUTION.md`.
 
-Suggested wording before DOI assignment:
+Suggested citation:
 
 > Han, Bo, and UBY Specification Contributors. UBY-labeled cross-scale temporal
 > database for Phanerozoic fossil occurrences, forcing events, astronomical
 > records, and mass-extinction dynamics. Version 0.1.0. Zenodo.
-> DOI: to be assigned.
+> DOI: 10.5281/zenodo.20763218.
 
 ## Integrity verification
 
@@ -83,18 +88,15 @@ Processing scripts are located in `examples/`.  The most important scripts are:
 - `annotate_pbdb_animalia_phanerozoic.py`
 - `download_pbdb_collections_animalia_phanerozoic.py`
 - `annotate_pbdb_collections_animalia_phanerozoic.py`
+- `annotate_pbdb_dinosauria.py`
 - `annotate_ics_chart.py`
 - `annotate_nasa_exoplanet_archive.py`
 - `annotate_nasa_jpl_cneos_fireballs.py`
 - `annotate_simbad_high_redshift_objects.py`
 - `benchmark_usgs_earthquake_annotation.py`
+- `build_external_databases_uby.py`
 - `build_unified_timeline_db_streaming.py`
-- `build_pbdb_extinction_dynamics.py`
 - `build_forcing_event_compilation.py`
-- `build_forcing_extinction_leadlag.py`
-- `run_extinction_sensitivity_analysis.py`
-- `analyze_end_ordovician_signal.py`
-- `analyze_end_ordovician_sampling_controls.py`
 
 ## Files
 

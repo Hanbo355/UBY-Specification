@@ -7,7 +7,7 @@ values in Plotly charts with appropriate scale-dependent formatting.
 
 import numpy as np
 from typing import Optional, Union, List, Dict, Any
-from .core import UBYTime
+from .models import UBYTime
 from .conversion import jd_to_uby, uby_to_jd
 
 
@@ -41,22 +41,15 @@ class UBYTickFormatter:
         # Cosmic scale (>1G years): Use G units
         if value >= 1e9:
             return f"UBY {value/1e9:.2f}G"
-        # Geological scale (1M-1G years): Use M units  
+        # Geological scale (1M-1G years): Use M units
         elif value >= 1e6:
             return f"UBY {value/1e6:.1f}M"
-        # Historical scale: Try mnemonic format
-        elif value >= 13786000000:  # Within Level 1 range
-            try:
-                uby_time = UBYTime(value, model_version=self.model_version)
-                return uby_time.format_mnemonic_academic()
-            except:
-                return f"UBY {value:.0f}"
-        # Early universe: K units or direct
+        # Thousand-year scale: Use K units
+        elif value >= 1000:
+            return f"UBY {value/1000:.1f}K"
+        # Sub-thousand-year scale: plain integer
         else:
-            if value >= 1000:
-                return f"UBY {value/1000:.1f}K"
-            else:
-                return f"UBY {value:.0f}"
+            return f"UBY {value:.0f}"
     
     def generate_tickvals_and_text(self, vmin: float, vmax: float, 
                                    max_ticks: int = 8) -> tuple:
@@ -416,9 +409,12 @@ def jd_to_uby_plotly(jd_values: Union[float, List[float]],
         Corresponding UBY values
     """
     if isinstance(jd_values, (int, float)):
-        return jd_to_uby(jd_values, model_version=model_version)
+        return float(jd_to_uby(jd_values, model_version=model_version).uby_value)
     else:
-        return [jd_to_uby(jd, model_version=model_version) for jd in jd_values]
+        return [
+            float(jd_to_uby(jd, model_version=model_version).uby_value)
+            for jd in jd_values
+        ]
 
 
 def uby_to_jd_plotly(uby_values: Union[float, List[float]], 
@@ -439,6 +435,6 @@ def uby_to_jd_plotly(uby_values: Union[float, List[float]],
         Corresponding Julian Day values
     """
     if isinstance(uby_values, (int, float)):
-        return uby_to_jd(uby_values, model_version=model_version)
+        return float(uby_to_jd(uby_values))
     else:
-        return [uby_to_jd(uby, model_version=model_version) for uby in uby_values]
+        return [float(uby_to_jd(uby)) for uby in uby_values]

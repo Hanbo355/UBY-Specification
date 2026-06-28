@@ -49,3 +49,9 @@ data/processed/
 !data_release/
 !data_release/**
 !.zenodo.json
+
+# But exclude local Zenodo upload state (contains upload progress, not for version control)
+data_release/**/.zenodo_upload_state.json
+
+# Discovery / exploration scratch output
+discovery_results.json

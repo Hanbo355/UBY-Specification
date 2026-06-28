@@ -147,7 +147,7 @@ def test_dataset_record_numeric_checks() -> None:
 def test_dataset_records_summary_counts_errors_warnings_and_skipped_rows() -> None:
     valid = _valid_nasa_record()
     warning = _valid_nasa_record()
-    warning["uby_version"] = "0.2.0"
+    warning["uby_version"] = "0.0.9"
     invalid = _valid_nasa_record()
     invalid["uby_value"] = "-1"
 

@@ -26,6 +26,11 @@
   ],
   "related_identifiers": [
     {
+      "identifier": "https://github.com/Hanbo355/UBY-Specification",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
       "identifier": "https://paleobiodb.org",
       "relation": "isDerivedFrom",
       "scheme": "url"
@@ -54,6 +59,6 @@
     "USGS Earthquake Hazards Program, https://earthquake.usgs.gov",
     "SIMBAD astronomical database, CDS, Strasbourg, https://simbad.cds.unistra.fr"
   ],
-  "file_count": 56,
-  "total_size_bytes": 5850959685
+  "file_count": 37,
+  "total_size_bytes": 6227938001
 }

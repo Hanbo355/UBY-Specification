@@ -8,6 +8,7 @@ from typing import Any
 
 from .anchors import DEFAULT_ANCHOR
 from .constants import DEFAULT_MODEL_VERSION, DEFAULT_ROUNDING_RULE, GENERATED_BY, UBY_SPEC_VERSION
+from .cross_domain import cross_domain_join, null_hypothesis_test
 from .conversion import (
     astronomical_year_to_uby,
     bc_year_to_uby,
@@ -182,6 +183,29 @@ def build_parser() -> argparse.ArgumentParser:
     lint_spec.add_argument("--format", choices=["text", "json", "csv"], default="text")
     lint_spec.add_argument("--allow-missing-spec", action="store_true")
 
+    cross_join = sub.add_parser(
+        "cross-join",
+        help="Execute the §19 cross-domain proximity JOIN on a UBY SQLite database",
+    )
+    cross_join.add_argument("--db", required=True, help="Path to a SQLite database with the uby_events table")
+    cross_join.add_argument("--cat-a", required=True, help="event_category for set A")
+    cross_join.add_argument("--cat-b", required=True, help="event_category for set B")
+    cross_join.add_argument("--tau", type=float, required=True, help="Proximity threshold in Julian years")
+    cross_join.add_argument("--limit", type=int, default=0, help="Cap the number of returned pairs (0 = unlimited)")
+    cross_join.add_argument("--format", choices=["text", "json", "csv"], default="text")
+
+    null_test = sub.add_parser(
+        "null-test",
+        help="Execute the §20 Monte Carlo permutation test on a cross-domain alignment",
+    )
+    null_test.add_argument("--db", required=True, help="Path to a SQLite database with the uby_events table")
+    null_test.add_argument("--cat-a", required=True, help="event_category for set A")
+    null_test.add_argument("--cat-b", required=True, help="event_category for set B")
+    null_test.add_argument("--tau", type=float, required=True, help="Proximity threshold in Julian years")
+    null_test.add_argument("--n-mc", type=int, default=1000, help="Monte Carlo iterations (default: 1000)")
+    null_test.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
+    null_test.add_argument("--format", choices=["text", "json", "csv"], default="text")
+
     return parser
 
 
@@ -352,6 +376,70 @@ def main(argv: list[str] | None = None) -> int:
                         f"{issue.code}:{issue.expression}:{issue.message}"
                     )
             return 1 if any(issue.level == "error" for issue in issues) else 0
+
+    if args.cmd == "cross-join":
+        result = cross_domain_join(
+            args.db,
+            cat_a=args.cat_a,
+            cat_b=args.cat_b,
+            tau_years=args.tau,
+        )
+        pairs = result.pairs if args.limit <= 0 else result.pairs[: args.limit]
+        if args.format == "json":
+            payload = {
+                "cat_a": result.cat_a,
+                "cat_b": result.cat_b,
+                "tau": result.tau,
+                "pair_count": len(result.pairs),
+                "returned_pair_count": len(pairs),
+                "null_test_result": result.null_test_result,
+                "pairs": [pair.to_dict() for pair in pairs],
+            }
+            print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+        elif args.format == "csv":
+            fieldnames = [
+                "a_event_id", "b_event_id", "a_event_name", "b_event_name",
+                "a_event_category", "b_event_category",
+                "a_uby_value", "b_uby_value", "delta",
+                "a_uby_precision_level", "b_uby_precision_level", "tau",
+            ]
+            _print_csv_rows([pair.to_dict() for pair in pairs], fieldnames=fieldnames)
+        else:
+            print(f"cat_a={result.cat_a}")
+            print(f"cat_b={result.cat_b}")
+            print(f"tau={result.tau}")
+            print(f"pair_count={len(result.pairs)}")
+            print(f"null_test_result={result.null_test_result}")
+            for pair in pairs:
+                print(
+                    f"pair: a={pair.a_event_name} ({pair.a_event_category} "
+                    f"L{pair.a_uby_precision_level}) "
+                    f"b={pair.b_event_name} ({pair.b_event_category} "
+                    f"L{pair.b_uby_precision_level}) "
+                    f"delta={pair.delta:.6g}"
+                )
+        return 0
+
+    if args.cmd == "null-test":
+        import random as _random
+        rng = _random.Random(args.seed) if args.seed is not None else None
+        result = null_hypothesis_test(
+            args.db,
+            cat_a=args.cat_a,
+            cat_b=args.cat_b,
+            tau_years=args.tau,
+            n_mc=args.n_mc,
+            rng=rng,
+        )
+        payload = result.to_dict()
+        if args.format == "json":
+            print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+        elif args.format == "csv":
+            _print_csv_rows([payload])
+        else:
+            for key, value in payload.items():
+                print(f"{key}={value}")
+        return 0
 
     return 1
 

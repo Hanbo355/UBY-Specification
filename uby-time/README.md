@@ -1,6 +1,6 @@
 # uby-time
 
-[![CI](https://github.com/uby-spec/uby-time/actions/workflows/ci.yml/badge.svg)](https://github.com/uby-spec/uby-time/actions/workflows/ci.yml)
+[![CI](https://github.com/Hanbo355/UBY-Specification/actions/workflows/ci.yml/badge.svg)](https://github.com/Hanbo355/UBY-Specification/actions/workflows/ci.yml)
 
 Python reference implementation for the **UBY Cross-scale Time Labeling Specification — Working Draft 0.1.0**.
 
@@ -139,9 +139,22 @@ restored = from_json(payload)
 ## Cosmology uncertainty note
 
 `redshift_to_uby()` uses `astropy.cosmology.<model>.age(z)` for the age calculation.  When
-`include_uncertainty=True`, the emitted `uncertainty_years` value is a heuristic annotation for
-downstream labeling and QA.  It is not a strict covariance propagation and is not a substitute for
-re-integrating the cosmology under a documented parameter set.
+`include_uncertainty=True`, the emitted `uncertainty_years` value is computed as follows:
+
+- **Models with published parameter uncertainties** (Planck18/15/13, WMAP9/7/5): a first-order
+  (linearized) propagation of the published 1-sigma parameter uncertainties. Numerical partial
+  derivatives of `age(z)` with respect to each parameter (e.g. `H0`, `Om0`) are evaluated by central
+  finite differences and combined in quadrature. Off-diagonal covariances are neglected
+  (uncorrelated-parameter approximation), so the result is a defensible first-order estimate rather
+  than a full Fisher/MCMC covariance treatment. The published sigmas and their literature sources are
+  listed in `PARAMETER_UNCERTAINTIES` in `cosmology.py`.
+- **Models without published parameter uncertainties** (e.g. the illustrative Millennium and EdS
+  cosmologies): a clearly-labelled heuristic order-of-magnitude annotation is used as a fallback. It
+  must not be interpreted as a strict error estimate.
+
+The method actually used is recorded in the `propagation_note` field of each result
+(`parameter-covariance-propagation` vs `heuristic`). Set `include_uncertainty=False` to omit the
+uncertainty entirely.
 
 ## CLI
 
@@ -221,3 +234,21 @@ A MkDocs configuration is provided in `mkdocs.yml`.
 ```bash
 mkdocs serve
 ```
+
+## Citation and data availability
+
+- **Code repository (GitHub):** https://github.com/Hanbo355/UBY-Specification
+- **Dataset archive (Zenodo):** https://doi.org/10.5281/zenodo.20763218
+- **Dataset license:** Creative Commons Attribution 4.0 International (CC-BY-4.0)
+- **Code license:** BSD 3-Clause
+
+Suggested citation:
+
+> Han, Bo, and UBY Specification Contributors. UBY-labeled cross-scale temporal
+> database for Phanerozoic fossil occurrences, forcing events, astronomical
+> records, and mass-extinction dynamics. Version 0.1.0. Zenodo.
+> https://doi.org/10.5281/zenodo.20763218
+
+The processed-dataset manifest, checksums, data dictionary, and quality-control
+report are generated under `data_release/uby-time-dataset-v0.1.0/`. See
+`DATA_AVAILABILITY.md` in that directory for the full archival statement.

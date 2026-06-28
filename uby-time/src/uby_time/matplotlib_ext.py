@@ -52,14 +52,16 @@ class UBYFormatter(ticker.Formatter):
         if self.auto_format:
             return self._auto_format_value(x)
         else:
-            # Create a minimal UBYTime object for full formatting
+            # Create a proper UBYTime object for full formatting.
+            # UBYTime is a frozen dataclass, so use dataclasses.replace to set
+            # the value instead of mutating the instance in place.
+            from dataclasses import replace
+            from decimal import Decimal
             from .conversion import jd_to_uby
             from .anchors import DEFAULT_ANCHOR
-            # Use a dummy JD conversion to create proper UBYTime object
-            dummy_jd = DEFAULT_ANCHOR.anchor_jd
-            uby_time = jd_to_uby(dummy_jd, model_version=self.model_version)
-            # Replace the UBY value with our actual value
-            uby_time.uby_value = x
+
+            base = jd_to_uby(DEFAULT_ANCHOR.anchor_jd, model_version=self.model_version)
+            uby_time = replace(base, uby_value=Decimal(str(x)))
             return format_full(uby_time)
     
     def _auto_format_value(self, value: float) -> str:
@@ -67,46 +69,23 @@ class UBYFormatter(ticker.Formatter):
         # Cosmic scale (>1G years): Use G units
         if value >= 1e9:
             return f"UBY {value/1e9:.2f}G"
-        # Geological scale (1M-1G years): Use M units  
+        # Geological scale (1M-1G years): Use M units
         elif value >= 1e6:
             return f"UBY {value/1e6:.1f}M"
-        # Historical scale: Try mnemonic format
-        elif value >= 13786000000:  # Within Level 1 range
-            try:
-                # For historical scale, use simple UBY format
-                return f"UBY {value:.0f}"
-            except:
-                return f"UBY {value:.0f}"
-        # Early universe: Scientific notation
+        # Thousand-year scale: Use K units
+        elif value >= 1000:
+            return f"UBY {value/1000:.1f}K"
+        # Sub-thousand-year scale: plain integer
         else:
-            if value >= 1000:
-                return f"UBY {value/1000:.1f}K"
-            else:
-                return f"UBY {value:.0f}"
-    
+            return f"UBY {value:.0f}"
+
     def _auto_format(self, uby_time: UBYTime) -> str:
-        """Automatically select appropriate format based on scale."""
-        value = float(uby_time.uby_value)
-        
-        # Cosmic scale (>1G years): Use G units
-        if value >= 1e9:
-            return f"UBY {value/1e9:.2f}G"
-        # Geological scale (1M-1G years): Use M units  
-        elif value >= 1e6:
-            return f"UBY {value/1e6:.1f}M"
-        # Historical scale: Try mnemonic format
-        elif value >= 13786000000:  # Within Level 1 range
-            try:
-                # For historical scale, use simple UBY format
-                return f"UBY {value:.0f}"
-            except:
-                return f"UBY {value:.0f}"
-        # Early universe: Scientific notation
-        else:
-            if value >= 1000:
-                return f"UBY {value/1000:.1f}K"
-            else:
-                return f"UBY {value:.0f}"
+        """Automatically select appropriate format based on scale.
+
+        Convenience wrapper that delegates to ``_auto_format_value`` so the
+        scale thresholds are defined in a single place.
+        """
+        return self._auto_format_value(float(uby_time.uby_value))
 
 
 class UBYLocator(ticker.Locator):

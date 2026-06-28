@@ -13,11 +13,11 @@ The generated `quality_control_report.json` summarizes automated release checks.
 
 ## Summary
 
-- CSV files: 23
-- SQLite files: 16
-- JSON files: 17
-- Total CSV rows: 3,143,604
-- Total SQLite table rows: 4,721,299
+- CSV files: 12
+- SQLite files: 13
+- JSON files: 12
+- Total CSV rows: 3,172,053
+- Total SQLite table rows: 4,909,419
 
 ## Scientific limitations
 

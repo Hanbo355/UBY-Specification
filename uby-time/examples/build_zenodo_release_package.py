@@ -43,6 +43,10 @@ RELEASE_VERSION = "0.1.0"
 RELEASE_ID = "uby-time-dataset-v0.1.0"
 RELEASE_DIR = RELEASE_ROOT / RELEASE_ID
 
+GITHUB_REPOSITORY_URL = "https://github.com/Hanbo355/UBY-Specification"
+ZENODO_DOI = "10.5281/zenodo.20763218"
+ZENODO_DOI_URL = "https://doi.org/" + ZENODO_DOI
+
 DATASET_TITLE = (
     "UBY-labeled cross-scale temporal database for Phanerozoic fossil occurrences, "
     "forcing events, astronomical records, and mass-extinction dynamics"
@@ -76,6 +80,47 @@ TRANSIENT_TEXT_FILES = {
     "pbdb_collections_field_probe.txt",
     "pbdb_collections_validity_probe.txt",
     "pbdb_field_probe.txt",
+    "pbdb_download_status.txt",
+    "pbdb_extinction_dynamics_analysis.txt",
+    "forcing_extinction_leadlag_run_output_after_fix.txt",
+    "forcing_extinction_leadlag_run_output_csv_source.txt",
+    "forcing_extinction_leadlag_run_output_final.txt",
+    "forcing_sqlite_inspection.txt",
+    "forcing_sqlite_inspection_after_fix.txt",
+    "simbad_unified_verification.txt",
+}
+
+# Intermediate analytical / derived artefacts that are not part of the final
+# journal-grade data release.  Only core UBY-labeled source datasets, the
+# unified timeline, the forcing-event compilation, and their metadata are
+# archived.  Downstream analysis tables remain reproducible from the code in
+# `examples/` and are deliberately excluded from the deposition.
+INTERMEDIATE_EXCLUDE_PREFIXES = (
+    "end_ordovician_",
+    "extinction_sensitivity_",
+    "pbdb_extinction_dynamics",
+    "pbdb_extinction_intensity_by_bin",
+    "pbdb_recovery_lag",
+    "pbdb_taxon_disappearances",
+    "pbdb_taxon_ranges",
+    "uby_forcing_extinction_leadlag_",
+    "uby_mass_extinction_lag_",
+    "phanerozoic_diversity_",
+    "phanerozoic_sqs_diversity_",
+)
+
+INTERMEDIATE_EXCLUDE_NAMES = {
+    "mass_extinction_periodicity_report.json",
+    "milankovitch_orbital_signal_report.json",
+    "modern_climate_attribution_report.json",
+    "modern_co2_rate_uniqueness_report.json",
+    "cross_scale_lip_extinction_periodicity_report.json",
+    "cross_scale_precision_law_report.json",
+    "true_cross_scale_precision_report.json",
+    "paleoclimate_multisource_report.json",
+    "dataset_merge_report.json",
+    "external_databases_integration_report.json",
+    "processed_datasets_conformance_report.json",
 }
 
 
@@ -152,6 +197,12 @@ def _classify_file(path: Path) -> str:
     return "supporting_file"
 
 
+def _is_intermediate(name: str) -> bool:
+    if name in INTERMEDIATE_EXCLUDE_NAMES:
+        return True
+    return any(name.startswith(prefix) for prefix in INTERMEDIATE_EXCLUDE_PREFIXES)
+
+
 def _processed_files() -> list[Path]:
     files: list[Path] = []
     for pattern in PROCESSED_FILE_PATTERNS:
@@ -161,6 +212,8 @@ def _processed_files() -> list[Path]:
         if path.name in EXCLUDE_NAMES or path.name in TRANSIENT_TEXT_FILES:
             continue
         if any(path.name.endswith(suffix) for suffix in EXCLUDE_SUFFIXES):
+            continue
+        if _is_intermediate(path.name):
             continue
         if path.is_file():
             output.append(path)
@@ -215,16 +268,21 @@ The release includes:
 
 - PBDB Animalia / Phanerozoic fossil occurrence UBY annotations.
 - PBDB collection-level UBY annotations for sampling-control analyses.
+- PBDB Dinosauria UBY annotations.
 - ICS chronostratigraphic chart UBY annotations.
 - NASA Exoplanet Archive discovery-time annotations.
-- NASA/JPL CNEOS fireball time annotations.
+- NASA/JPL CNEOS fireball event annotations.
 - SIMBAD high-redshift object UBY annotations.
 - USGS earthquake benchmark annotations.
+- External-database UBY cross-reference records.
 - A unified cross-domain UBY timeline.
-- PBDB-derived extinction dynamics.
-- Forcing-event compilation and forcing-extinction lead-lag tables.
-- End-Ordovician focused signal and sampling-control outputs.
-- Sensitivity-analysis outputs for bin size, taxonomic level, and disappearance window.
+- A forcing-event compilation.
+
+Intermediate analytical artefacts (end-Ordovician signal extractions,
+extinction-sensitivity sweeps, mass-extinction lead/lag databases, periodogram
+reports, diversity curves, etc.) are deliberately excluded from the deposition:
+they remain fully reproducible from the source datasets and the scripts in
+`examples/`.
 
 ## Release identity
 
@@ -252,12 +310,12 @@ biological extinction or origination times.
 If this dataset is used, cite the Zenodo DOI assigned to this release and cite
 the original data providers listed in `LICENSES_AND_ATTRIBUTION.md`.
 
-Suggested wording before DOI assignment:
+Suggested citation:
 
 > Han, Bo, and UBY Specification Contributors. UBY-labeled cross-scale temporal
 > database for Phanerozoic fossil occurrences, forcing events, astronomical
 > records, and mass-extinction dynamics. Version {RELEASE_VERSION}. Zenodo.
-> DOI: to be assigned.
+> DOI: {ZENODO_DOI}.
 
 ## Integrity verification
 
@@ -287,18 +345,15 @@ Processing scripts are located in `examples/`.  The most important scripts are:
 - `annotate_pbdb_animalia_phanerozoic.py`
 - `download_pbdb_collections_animalia_phanerozoic.py`
 - `annotate_pbdb_collections_animalia_phanerozoic.py`
+- `annotate_pbdb_dinosauria.py`
 - `annotate_ics_chart.py`
 - `annotate_nasa_exoplanet_archive.py`
 - `annotate_nasa_jpl_cneos_fireballs.py`
 - `annotate_simbad_high_redshift_objects.py`
 - `benchmark_usgs_earthquake_annotation.py`
+- `build_external_databases_uby.py`
 - `build_unified_timeline_db_streaming.py`
-- `build_pbdb_extinction_dynamics.py`
 - `build_forcing_event_compilation.py`
-- `build_forcing_extinction_leadlag.py`
-- `run_extinction_sensitivity_analysis.py`
-- `analyze_end_ordovician_signal.py`
-- `analyze_end_ordovician_sampling_controls.py`
 
 ## Files
 
@@ -531,32 +586,34 @@ providers when using the corresponding records.
 def _write_availability_docs() -> None:
     data_availability = f"""# Data Availability
 
-The intended archival target for this release is Zenodo.
-
-Before publication:
+The UBY Time Dataset v{RELEASE_VERSION} is archived on Zenodo under a Creative
+Commons Attribution 4.0 International (CC-BY-4.0) license.
 
 - Dataset release: `{RELEASE_ID}`
-- DOI: to be assigned by Zenodo
+- DOI: {ZENODO_DOI}
+- Landing page: {ZENODO_DOI_URL}
 - License: CC-BY-4.0
 - Files: listed in `dataset_manifest.json`
 - Integrity: `checksums_sha256.txt`
 
-After Zenodo upload, replace this placeholder with the final DOI and landing
-page URL.
+Recommended citation:
 
-Recommended final wording:
-
-> The UBY Time Dataset v{RELEASE_VERSION} is available at Zenodo under a Creative
-> Commons Attribution 4.0 International license: DOI: [insert DOI].
+> Han, Bo, and UBY Specification Contributors. UBY-labeled cross-scale temporal
+> database for Phanerozoic fossil occurrences, forcing events, astronomical
+> records, and mass-extinction dynamics. Version {RELEASE_VERSION}. Zenodo.
+> DOI: {ZENODO_DOI}.
 """
     (RELEASE_DIR / "DATA_AVAILABILITY.md").write_text(data_availability, encoding="utf-8")
 
-    code_availability = """# Code Availability
+    code_availability = f"""# Code Availability
 
-The full processing workflow is intended to be archived through GitHub and
-linked to Zenodo.
+The full processing workflow is archived through GitHub and linked to Zenodo.
 
-Recommended GitHub repository contents:
+- GitHub repository: {GITHUB_REPOSITORY_URL}
+- Recommended release tag: `v{RELEASE_VERSION}`
+- Code license: BSD 3-Clause
+
+Repository contents:
 
 - `src/uby_time/` — UBY Time Python package.
 - `examples/` — complete data processing scripts.
@@ -564,16 +621,14 @@ Recommended GitHub repository contents:
 - `schemas/` — JSON Schemas.
 - `specs/` and `docs/` — specification and user documentation.
 - `pyproject.toml` — reproducible Python package metadata.
+- `data_release/{RELEASE_ID}/` — release metadata and manifests.
 
 Recommended release steps:
 
 1. Commit all source code, scripts, schemas, and documentation.
-2. Tag a release, for example `v0.1.0`.
-3. Enable GitHub-Zenodo integration.
-4. Archive the GitHub release on Zenodo.
-5. Record the code DOI in the dataset Zenodo record.
-
-The code license is BSD 3-Clause.
+2. Tag a release, for example `v{RELEASE_VERSION}`.
+3. Enable GitHub-Zenodo integration to obtain a software DOI.
+4. Record the software DOI in this document if minted.
 """
     (RELEASE_DIR / "CODE_AVAILABILITY.md").write_text(code_availability, encoding="utf-8")
 
@@ -606,6 +661,11 @@ def _write_zenodo_metadata(entries: list[FileManifestEntry]) -> None:
             "scientific data",
         ],
         "related_identifiers": [
+            {
+                "identifier": GITHUB_REPOSITORY_URL,
+                "relation": "isSupplementTo",
+                "scheme": "url",
+            },
             {
                 "identifier": "https://paleobiodb.org",
                 "relation": "isDerivedFrom",

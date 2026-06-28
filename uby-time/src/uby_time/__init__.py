@@ -106,6 +106,13 @@ from .spec_lint import (
 from .pandas_ext import register_pandas_accessors
 from .uncertainty import combine_uncertainties_quadrature, get_effective_interval
 from .validation import validate_uby_time
+from .cross_domain import (
+    CrossDomainJoinResult,
+    CrossDomainPair,
+    NullHypothesisTestResult,
+    cross_domain_join,
+    null_hypothesis_test,
+)
 
 __all__ = [
     "UBY_SPEC_VERSION",
@@ -202,4 +209,9 @@ __all__ = [
     "combine_uncertainties_quadrature",
     "get_effective_interval",
     "validate_uby_time",
+    "CrossDomainJoinResult",
+    "CrossDomainPair",
+    "NullHypothesisTestResult",
+    "cross_domain_join",
+    "null_hypothesis_test",
 ]

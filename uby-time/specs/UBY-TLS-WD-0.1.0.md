@@ -13,7 +13,7 @@
 | Release date | 2026-06-15 |
 | Scope of application | Cross-scale time labeling, long-term archival, auxiliary indexing for scientific data, and cosmological-geological-human-history narratives |
 | Current status | Exploratory working draft; not yet a formal specification |
-| DOI | To be assigned |
+| DOI | 10.5281/zenodo.20763218 (dataset archive); specification DOI to be assigned |
 
 ---
 

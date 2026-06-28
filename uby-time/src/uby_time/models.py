@@ -22,6 +22,11 @@ class PrecisionLevel(str, Enum):
     LEVEL_2 = "Level 2"
     LEVEL_3 = "Level 3"
 
+    @property
+    def ordinal(self) -> int:
+        """Return the coarseness rank: 1=finest, 3=coarsest."""
+        return {"Level 1": 1, "Level 2": 2, "Level 3": 3}[self.value]
+
 
 @dataclass(frozen=True)
 class UBYAnchor:
@@ -53,140 +58,125 @@ class UBYTime:
     uncertainty_kind: Optional[str] = None
     propagation_note: Optional[str] = None
 
-    @staticmethod
-    def from_uby_string(uby_str: str) -> 'UBYTime':
-        """从UBY字符串创建UBYTime实例，支持完整格式和简化格式"""
+    # Magnitude shorthand pattern, e.g. "1G", "13.8G", "500M".
+    _MAGNITUDE_RE = re.compile(r"^(\d+(?:\.\d+)?)\s*([KMGTP])$")
+
+    @classmethod
+    def _from_parsed_expression(cls, expression: str) -> "UBYTime":
+        """Build a UBYTime from a full UBY expression via the canonical parser.
+
+        The parser is the single source of truth for precision level and tags,
+        so this method does not re-infer precision from the numeric magnitude.
+        """
         from .parsing import parse_uby_expression
+
+        parsed = parse_uby_expression(expression)
+        return cls(
+            uby_value=parsed.uby_value,
+            uby_version=parsed.uby_version or UBY_SPEC_VERSION,
+            model_version=parsed.model_version,
+            precision_level=parsed.precision_level or PrecisionLevel.LEVEL_1,
+            source_time=parsed.raw,
+            source_system="UBYExpression",
+            rounding_rule=DEFAULT_ROUNDING_RULE,
+            generated_by=GENERATED_BY,
+            anchor_id=DEFAULT_ANCHOR_ID,
+            anchor_jd=DEFAULT_ANCHOR_JD,
+            anchor_uby=DEFAULT_ANCHOR_UBY,
+        )
+
+    @classmethod
+    def _from_magnitude_shorthand(cls, uby_str: str, match: "re.Match[str]") -> "UBYTime":
+        """Build a UBYTime from magnitude shorthand such as ``13.8G``.
+
+        Magnitude shorthand is, by specification, a Level 2 display form, so the
+        precision level is assigned from the notation type rather than guessed
+        from the numeric magnitude.
+        """
         from .constants import MAGNITUDE_FACTORS
-        
-        # 如果输入已经是完整UBY格式（以UBY开头），直接解析
-        if uby_str.strip().upper().startswith('UBY'):
-            parsed = parse_uby_expression(uby_str)
-            
-            # 从解析结果创建UBYTime实例
-            return UBYTime(
-                uby_value=parsed.uby_value,
-                uby_version=parsed.uby_version or UBY_SPEC_VERSION,
-                model_version=parsed.model_version,
-                precision_level=parsed.precision_level or PrecisionLevel.LEVEL_1,
-                source_time=parsed.raw,
-                source_system="UBYExpression",
-                rounding_rule=DEFAULT_ROUNDING_RULE,
-                generated_by=GENERATED_BY,
-                anchor_id=DEFAULT_ANCHOR_ID,
-                anchor_jd=DEFAULT_ANCHOR_JD,
-                anchor_uby=DEFAULT_ANCHOR_UBY,
-            )
-        else:
-            # 处理简化格式，如 "1G", "13.8G", "500M" 等
-            # 检查是否为带量级的格式
-            mag_pattern = r'^(\d+(?:\.\d+)?)\s*([KMGTP])$'
-            match = re.match(mag_pattern, uby_str.strip().upper())
-            
-            if match:
-                value_part = match.group(1)
-                magnitude = match.group(2)
-                
-                numeric_value = Decimal(value_part)
-                multiplier = MAGNITUDE_FACTORS.get(magnitude, Decimal('1'))
-                final_value = numeric_value * multiplier
-                
-                # 确定精度级别
-                precision_level = PrecisionLevel.LEVEL_2  # 量级格式通常属于二级精度
-                
-                return UBYTime(
-                    uby_value=final_value,
-                    uby_version=UBY_SPEC_VERSION,
-                    model_version=DEFAULT_MODEL_VERSION,
-                    precision_level=precision_level,
-                    source_time=uby_str,
-                    source_system="UBYExpression",
-                    rounding_rule=DEFAULT_ROUNDING_RULE,
-                    generated_by=GENERATED_BY,
-                    anchor_id=DEFAULT_ANCHOR_ID,
-                    anchor_jd=DEFAULT_ANCHOR_JD,
-                    anchor_uby=DEFAULT_ANCHOR_UBY,
-                )
-            else:
-                # 如果不是量级格式，尝试解析为纯数字（年数）
-                try:
-                    numeric_value = Decimal(uby_str.strip())
-                    
-                    # 根据数值大小判断精度级别
-                    if numeric_value < Decimal("1000000"):  # 小于1百万年，一级精度
-                        precision_level = PrecisionLevel.LEVEL_1
-                    elif numeric_value < Decimal("100000000000"):  # 小于1000亿年，二级精度
-                        precision_level = PrecisionLevel.LEVEL_2
-                    else:  # 更大的数值，三级精度
-                        precision_level = PrecisionLevel.LEVEL_3
-                    
-                    return UBYTime(
-                        uby_value=numeric_value,
-                        uby_version=UBY_SPEC_VERSION,
-                        model_version=DEFAULT_MODEL_VERSION,
-                        precision_level=precision_level,
-                        source_time=uby_str,
-                        source_system="UBYExpression",
-                        rounding_rule=DEFAULT_ROUNDING_RULE,
-                        generated_by=GENERATED_BY,
-                        anchor_id=DEFAULT_ANCHOR_ID,
-                        anchor_jd=DEFAULT_ANCHOR_JD,
-                        anchor_uby=DEFAULT_ANCHOR_UBY,
-                    )
-                except:
-                    # 如果所有解析都失败，尝试加上"UBY "前缀再解析
-                    try:
-                        parsed = parse_uby_expression(f"UBY {uby_str}")
-                        
-                        return UBYTime(
-                            uby_value=parsed.uby_value,
-                            uby_version=parsed.uby_version or UBY_SPEC_VERSION,
-                            model_version=parsed.model_version,
-                            precision_level=parsed.precision_level or PrecisionLevel.LEVEL_1,
-                            source_time=parsed.raw,
-                            source_system="UBYExpression",
-                            rounding_rule=DEFAULT_ROUNDING_RULE,
-                            generated_by=GENERATED_BY,
-                            anchor_id=DEFAULT_ANCHOR_ID,
-                            anchor_jd=DEFAULT_ANCHOR_JD,
-                            anchor_uby=DEFAULT_ANCHOR_UBY,
-                        )
-                    except:
-                        raise ValueError(f"Cannot parse UBY string: {uby_str}")
+
+        numeric_value = Decimal(match.group(1))
+        multiplier = MAGNITUDE_FACTORS.get(match.group(2), Decimal("1"))
+        return cls(
+            uby_value=numeric_value * multiplier,
+            uby_version=UBY_SPEC_VERSION,
+            model_version=DEFAULT_MODEL_VERSION,
+            precision_level=PrecisionLevel.LEVEL_2,
+            source_time=uby_str,
+            source_system="UBYExpression",
+            rounding_rule=DEFAULT_ROUNDING_RULE,
+            generated_by=GENERATED_BY,
+            anchor_id=DEFAULT_ANCHOR_ID,
+            anchor_jd=DEFAULT_ANCHOR_JD,
+            anchor_uby=DEFAULT_ANCHOR_UBY,
+        )
+
+    @staticmethod
+    def from_uby_string(uby_str: str) -> "UBYTime":
+        """Create a UBYTime from a UBY string.
+
+        Supports three input shapes, tried in order:
+
+        1. A full UBY expression beginning with ``UBY`` (delegated to the parser).
+        2. Magnitude shorthand such as ``13.8G`` (Level 2 display form).
+        3. A bare value or expression body, parsed by prefixing ``UBY ``.
+
+        Precision level is always derived from the notation/parser, never from
+        the numeric magnitude, in line with the specification rule that UBY does
+        not infer precision from the size of the value.
+        """
+        from .errors import UBYParseError
+
+        stripped = uby_str.strip()
+
+        # Case 1: already a full UBY expression.
+        if stripped.upper().startswith("UBY"):
+            return UBYTime._from_parsed_expression(uby_str)
+
+        # Case 2: magnitude shorthand, e.g. "13.8G".
+        if match := UBYTime._MAGNITUDE_RE.match(stripped.upper()):
+            return UBYTime._from_magnitude_shorthand(uby_str, match)
+
+        # Case 3: treat the remainder as an expression body and let the parser
+        # validate it. This covers bare numeric values and tagged bodies.
+        try:
+            return UBYTime._from_parsed_expression(f"UBY {stripped}")
+        except UBYParseError as exc:
+            raise ValueError(f"Cannot parse UBY string: {uby_str}") from exc
 
     def to_uby_string(self, simplified: bool = False) -> str:
-        """将UBYTime实例转换为UBY字符串格式"""
-        # 如果明确指定使用简化格式，或者当前实例是由简化格式创建的，返回简化格式
-        if simplified or (self.source_time and not self.source_time.upper().startswith('UBY ')):
-            # 检查原始输入是否是简化格式（如"1G", "13.8G"等）
-            if self.source_time:
-                # 检查是否是量级格式
-                mag_pattern = r'^(\d+(?:\.\d+)?)\s*([KMGTP])$'
-                if re.match(mag_pattern, self.source_time.strip().upper()):
-                    return self.source_time
-        
-        # 默认返回完整格式
+        """Render this UBYTime as a UBY string.
+
+        When ``simplified`` is requested (or the instance was created from
+        magnitude shorthand), the original shorthand source is returned.
+        Otherwise the canonical full-numeric form with ``[model=...]`` and
+        ``[spec=...]`` tags is produced.
+        """
+        # Return the original shorthand form when applicable.
+        if simplified or (self.source_time and not self.source_time.upper().startswith("UBY ")):
+            if self.source_time and self._MAGNITUDE_RE.match(self.source_time.strip().upper()):
+                return self.source_time
+
+        # Default: full-numeric form with tags.
         result = f"UBY {self.uby_value}"
-        
-        # 添加标签
         tags = []
         if self.model_version:
             tags.append(f"[model={self.model_version}]")
         if self.uby_version:
             tags.append(f"[spec={self.uby_version}]")
-        
         if tags:
             result += " " + " ".join(tags)
-        
         return result
 
     @staticmethod
-    def from_julian_day(jd: float) -> 'UBYTime':
-        """从儒略日创建UBYTime实例"""
+    def from_julian_day(jd: float) -> "UBYTime":
+        """Create a UBYTime from a Julian Day value.
+
+        Delegates to the reference ``jd_to_uby`` conversion, which returns a
+        fully-populated UBYTime, so the JD is never mis-stored as the value.
+        """
         from .conversion import jd_to_uby
-        
-        # jd_to_uby 返回完整 UBYTime 对象；这里直接复用该参考转换结果，
-        # 避免把 UBYTime 实例误写入 uby_value 字段。
+
         return jd_to_uby(
             Decimal(str(jd)),
             source_time=str(jd),
@@ -194,31 +184,32 @@ class UBYTime:
         )
 
     def to_julian_day(self) -> float:
-        """将UBYTime实例转换为儒略日"""
+        """Convert this UBYTime back to a Julian Day value."""
         from .conversion import uby_to_jd
-        
-        # 使用转换函数将UBY转换为儒略日
-        jd_value = uby_to_jd(self.uby_value)
-        return float(jd_value)
 
-    def with_uncertainty(self, 
-                        uncertainty_years: Optional[Decimal] = None, 
+        return float(uby_to_jd(self.uby_value))
+
+    def with_uncertainty(self,
+                        uncertainty_years: Optional[Decimal] = None,
                         confidence_level: Optional[Decimal] = None,
                         interval_start: Optional[Decimal] = None,
                         interval_end: Optional[Decimal] = None,
-                        uncertainty_kind: Optional[str] = None) -> 'UBYTime':
-        """
-        创建带有不确定性信息的新UBYTime实例
-        
-        Args:
-            uncertainty_years: 不确定性年数
-            confidence_level: 置信水平
-            interval_start: 区间开始值
-            interval_end: 区间结束值
-            uncertainty_kind: 不确定性类型
-        
-        Returns:
-            带有不确定性信息的UBYTime实例
+                        uncertainty_kind: Optional[str] = None) -> "UBYTime":
+        """Return a copy of this UBYTime with uncertainty fields filled in.
+
+        Any argument left as ``None`` preserves the current value of the
+        corresponding field.
+
+        Parameters
+        ----------
+        uncertainty_years : Decimal, optional
+            Symmetric uncertainty in years.
+        confidence_level : Decimal, optional
+            Confidence level (e.g. 0.95).
+        interval_start, interval_end : Decimal, optional
+            Explicit lower/upper interval bounds in UBY years.
+        uncertainty_kind : str, optional
+            Kind of uncertainty (measurement, model, combined, ...).
         """
         return UBYTime(
             uby_value=self.uby_value,
@@ -241,11 +232,11 @@ class UBYTime:
         )
 
     def get_confidence_interval(self) -> Tuple[Optional[Decimal], Optional[Decimal]]:
-        """
-        获取置信区间
-        
-        Returns:
-            (下界, 上界) 元组
+        """Return the (lower, upper) confidence interval in UBY years.
+
+        An explicit interval takes precedence; otherwise a symmetric interval is
+        derived from ``uncertainty_years``. Returns ``(None, None)`` if neither
+        is available.
         """
         if self.interval_start_uby is not None and self.interval_end_uby is not None:
             return (self.interval_start_uby, self.interval_end_uby)
@@ -257,35 +248,27 @@ class UBYTime:
             return (None, None)
 
     def get_relative_uncertainty(self) -> Optional[Decimal]:
-        """
-        获取相对不确定性（百分比）
-        
-        Returns:
-            相对不确定性百分比
-        """
+        """Return the relative uncertainty as a percentage, or ``None``."""
         if self.uncertainty_years is not None and abs(self.uby_value) > Decimal('1e-10'):
             return (self.uncertainty_years / abs(self.uby_value)) * Decimal('100')
         return None
 
     def propagate_uncertainty_add(self, other: 'UBYTime') -> 'UBYTime':
-        """
-        传播加法运算的不确定性
-        
-        Args:
-            other: 另一个UBYTime实例
-        
-        Returns:
-            带有传播后不确定性的新UBYTime实例
+        """Add two UBYTime values and propagate their uncertainties.
+
+        Uncertainties are combined in quadrature (root-sum-of-squares). The
+        result keeps the lower (coarser) precision level and the lower
+        confidence level of the two operands.
         """
         from .uncertainty import decimal_sqrt
-        
-        # 计算合成不确定性 (RSS - Root Sum of Squares)
+
+        # Combine uncertainties via root-sum-of-squares (RSS).
         unc1 = self.uncertainty_years or Decimal('0')
         unc2 = other.uncertainty_years or Decimal('0')
-        
+
         combined_uncertainty = decimal_sqrt(unc1 ** 2 + unc2 ** 2)
-        
-        # 使用较低的置信水平，因为组合了多个不确定性源
+
+        # Use the lower confidence level since multiple sources are combined.
         confidence = min(
             self.confidence_level or Decimal('0.68'),
             other.confidence_level or Decimal('0.68')
@@ -297,8 +280,7 @@ class UBYTime:
             uby_value=new_value,
             uby_version=max(self.uby_version, other.uby_version),
             model_version=self.model_version or other.model_version,
-            precision_level=min([self.precision_level, other.precision_level], 
-                               key=lambda x: ["Level 1", "Level 2", "Level 3"].index(x.value)),
+            precision_level=max([self.precision_level, other.precision_level], key=lambda x: x.ordinal),
             source_time=f"Sum({self.source_time}, {other.source_time})",
             source_system="UncertaintyPropagation",
             rounding_rule=self.rounding_rule,
@@ -315,18 +297,11 @@ class UBYTime:
         )
 
     def propagate_uncertainty_multiply(self, factor: Decimal) -> 'UBYTime':
+        """Multiply this UBYTime by a scalar factor and propagate uncertainty.
+
+        The relative uncertainty is preserved under scalar multiplication.
         """
-        传播乘法运算的不确定性
-        
-        Args:
-            factor: 乘数因子
-        
-        Returns:
-            带有传播后不确定性的新UBYTime实例
-        """
-        from .uncertainty import decimal_sqrt
-        
-        # 计算相对不确定性
+        # Preserve relative uncertainty under scalar multiplication.
         if self.uncertainty_years and abs(self.uby_value) > Decimal('1e-10'):
             rel_uncertainty = self.uncertainty_years / abs(self.uby_value)
             new_abs_uncertainty = abs(factor) * rel_uncertainty * abs(self.uby_value)
@@ -356,18 +331,17 @@ class UBYTime:
         )
 
     def get_effective_precision_level(self) -> str:
-        """
-        根据不确定性确定有效的精度级别
-        
-        Returns:
-            有效的精度级别
+        """Return an effective precision level derived from relative uncertainty.
+
+        This is a convenience heuristic for downstream display only; it does not
+        override the declared ``precision_level`` of the record.
         """
         if self.uncertainty_years is None:
             return self.precision_level.value
-        
+
         rel_uncertainty = (self.uncertainty_years / abs(self.uby_value)) * Decimal('100') if abs(self.uby_value) > Decimal('1e-10') else Decimal('0')
-        
-        # 根据相对不确定性确定精度级别
+
+        # Map relative uncertainty to an effective precision level.
         if rel_uncertainty < Decimal('0.001'):  # < 0.001%
             return "Level 1"
         elif rel_uncertainty < Decimal('0.1'):   # < 0.1%

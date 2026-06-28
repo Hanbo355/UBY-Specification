@@ -3,139 +3,55 @@
 This file summarizes columns for CSV datasets included in the UBY Time data release.
 Types are inferred at the exchange-format level; most CSV fields are serialized as text for transparency.
 
-## `data/processed/end_ordovician_binning_compression.csv`
+## `data/processed/external_databases_uby.csv`
 
-- Rows: 3
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `taxon_level` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `window_ma` | Age or duration field. | Ma |
-| `precise_before_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `precise_after_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `precise_before_fraction` | Ratio or fraction field. | dimensionless |
-| `coarse_boundary_synchronous_count` | Count field. | integer |
-| `compression_ratio` | Ratio or fraction field. | dimensionless |
-| `interpretation` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/end_ordovician_forcing_lags.csv`
-
-- Rows: 2
+- Rows: 14567
 
 | Field | Description | Unit / convention |
 |---|---|---|
-| `forcing_event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_category` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_ma` | Age or duration field. | Ma |
-| `forcing_uncertainty_ma` | Age or duration field. | Ma |
-| `lag_years` | Year-valued time field. | years |
-| `abs_lag_years` | Year-valued time field. | years |
-| `overlap_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `source_dataset` | Source dataset or API. | text |
+| `source_record_id` | Source record identifier. | text |
+| `source_record_uri` | Source record URI if available. | URI |
+| `event_label` | Human-readable event label. | text |
+| `event_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `original_time_unit` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `original_time_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `measured_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `measured_value_unit` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `uncertainty_years` | Half-width or propagated time uncertainty. | years |
+| `precision_level` | UBY precision level assigned by source time type. | Level 1/2/3 |
+| `uby_value` | Representative UBY numeric label derived from source time. | UBY years |
+| `model_version` | Model or convention used for UBY conversion. | text |
+| `uby_version` | UBY specification/software version. | semantic version |
+| `anchor_id` | UBY anchor identifier. | text |
+| `anchor_uby` | UBY value of anchor. | UBY years |
+| `description` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `attribution` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
 
-## `data/processed/end_ordovician_sampling_bins.csv`
+## `data/processed/external_records_uby.csv`
 
-- Rows: 30
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `bin_young_ma` | Age or duration field. | Ma |
-| `bin_old_ma` | Age or duration field. | Ma |
-| `bin_mid_ma` | Age or duration field. | Ma |
-| `occurrence_count` | Count field. | integer |
-| `unique_accepted_names` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `unique_genera` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `unique_families` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_accepted_names` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_genera` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_families` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/end_ordovician_sampling_control_bins.csv`
-
-- Rows: 30
+- Rows: 12169
 
 | Field | Description | Unit / convention |
 |---|---|---|
-| `bin_young_ma` | Age or duration field. | Ma |
-| `bin_old_ma` | Age or duration field. | Ma |
-| `bin_mid_ma` | Age or duration field. | Ma |
-| `relation_to_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `occurrence_count` | Count field. | integer |
-| `unique_accepted_names` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `unique_genera` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `unique_families` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `reference_count` | Count field. | integer |
-| `formation_count` | Count field. | integer |
-| `geo_cell_count` | Count field. | integer |
-| `pseudo_collection_count` | Count field. | integer |
-| `accepted_last_taxa` | Count field. | integer |
-| `genus_last_taxa` | Count field. | integer |
-| `family_last_taxa` | Count field. | integer |
-| `accepted_last_per_occurrence` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `accepted_last_per_pseudo_collection` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `genus_last_per_occurrence` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `family_last_per_occurrence` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/end_ordovician_taxon_level_stability.csv`
-
-- Rows: 3
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `taxon_level` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `disappearing_taxa` | Count field. | integer |
-| `before_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `after_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `before_fraction` | Ratio or fraction field. | dimensionless |
-| `after_fraction` | Ratio or fraction field. | dimensionless |
-| `mean_lag_years` | Year-valued time field. | years |
-
-## `data/processed/end_ordovician_taxonomic_drivers.csv`
-
-- Rows: 302
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `grouping_level` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `group_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `disappearing_taxa` | Count field. | integer |
-| `before_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `after_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `before_fraction` | Ratio or fraction field. | dimensionless |
-| `after_fraction` | Ratio or fraction field. | dimensionless |
-| `mean_lag_years` | Year-valued time field. | years |
-
-## `data/processed/extinction_sensitivity_summary.csv`
-
-- Rows: 216
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `bin_size_ma` | Age or duration field. | Ma |
-| `taxon_level` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `disappearance_window_ma` | Age or duration field. | Ma |
-| `event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `event_ma` | Age or duration field. | Ma |
-| `standing_taxa` | Count field. | integer |
-| `first_appearances` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_appearances` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_intensity` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `disappearing_taxa` | Count field. | integer |
-| `before_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `after_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `before_fraction` | Ratio or fraction field. | dimensionless |
-| `after_fraction` | Ratio or fraction field. | dimensionless |
-| `mean_disappearance_lag_years` | Year-valued time field. | years |
-| `recovery_lag_years` | Year-valued time field. | years |
-| `recovered_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `nearest_forcing_event` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `nearest_forcing_category` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `nearest_forcing_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `nearest_forcing_lag_years` | Year-valued time field. | years |
-| `nearest_forcing_overlap_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `end_permian_strongest_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `kpg_impact_synchronous_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `end_ordovician_sea_level_or_climate_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `source_dataset` | Source dataset or API. | text |
+| `source_record_id` | Source record identifier. | text |
+| `source_record_uri` | Source record URI if available. | URI |
+| `event_label` | Human-readable event label. | text |
+| `event_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `original_time_unit` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `original_time_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `measured_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `measured_value_unit` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `uncertainty_years` | Half-width or propagated time uncertainty. | years |
+| `precision_level` | UBY precision level assigned by source time type. | Level 1/2/3 |
+| `uby_value` | Representative UBY numeric label derived from source time. | UBY years |
+| `model_version` | Model or convention used for UBY conversion. | text |
+| `uby_version` | UBY specification/software version. | semantic version |
+| `anchor_id` | UBY anchor identifier. | text |
+| `anchor_uby` | UBY value of anchor. | UBY years |
+| `description` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
+| `attribution` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
 
 ## `data/processed/ics_chart_uby.csv`
 
@@ -389,95 +305,6 @@ Types are inferred at the exchange-format level; most CSV fields are serialized 
 | `validation_messages` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
 | `attribution` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
 
-## `data/processed/pbdb_extinction_intensity_by_bin.csv`
-
-- Rows: 535
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `bin_id` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `bin_young_ma` | Age or duration field. | Ma |
-| `bin_old_ma` | Age or duration field. | Ma |
-| `bin_mid_ma` | Age or duration field. | Ma |
-| `bin_mid_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `standing_taxa` | Count field. | integer |
-| `first_appearances` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_appearances` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_intensity` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `origination_intensity` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/pbdb_recovery_lag.csv`
-
-- Rows: 6
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `event_ma` | Age or duration field. | Ma |
-| `event_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `event_uncertainty_ma` | Age or duration field. | Ma |
-| `baseline_window_ma` | Age or duration field. | Ma |
-| `baseline_mean_standing_taxa` | Count field. | integer |
-| `recovery_threshold_fraction` | Ratio or fraction field. | dimensionless |
-| `recovery_threshold_taxa` | Count field. | integer |
-| `event_bin_standing_taxa` | Count field. | integer |
-| `minimum_post_event_standing_taxa` | Count field. | integer |
-| `recovery_bin_mid_ma` | Age or duration field. | Ma |
-| `recovery_lag_years` | Year-valued time field. | years |
-| `recovered_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `method` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `source_doi` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/pbdb_taxon_disappearances.csv`
-
-- Rows: 8683
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `event_ma` | Age or duration field. | Ma |
-| `event_uncertainty_ma` | Age or duration field. | Ma |
-| `disappearance_window_ma` | Age or duration field. | Ma |
-| `taxon_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `taxon_rank` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `phylum` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `class_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `taxonomic_order` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `family` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `genus` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_ma` | Age or duration field. | Ma |
-| `first_ma` | Age or duration field. | Ma |
-| `duration_myr` | Ratio or fraction field. | dimensionless |
-| `lag_years` | Year-valued time field. | years |
-| `lag_direction` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `occurrence_count` | Count field. | integer |
-| `max_uncertainty_years` | Year-valued time field. | years |
-| `source_record_examples` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/pbdb_taxon_ranges.csv`
-
-- Rows: 195194
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `taxon_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `taxon_rank` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `phylum` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `class_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `taxonomic_order` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `family` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `genus` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `first_ma` | Age or duration field. | Ma |
-| `last_ma` | Age or duration field. | Ma |
-| `duration_myr` | Ratio or fraction field. | dimensionless |
-| `max_ma_observed` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `min_ma_observed` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `max_uncertainty_years` | Year-valued time field. | years |
-| `first_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `last_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `occurrence_count` | Count field. | integer |
-| `source_record_examples` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
 ## `data/processed/simbad_high_redshift_objects_uby.csv`
 
 - Rows: 5000
@@ -539,69 +366,9 @@ Types are inferred at the exchange-format level; most CSV fields are serialized 
 | `generated_by` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
 | `uby_version` | UBY specification/software version. | semantic version |
 
-## `data/processed/uby_forcing_extinction_leadlag_pairs.csv`
-
-- Rows: 11
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `extinction_event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_ma` | Age or duration field. | Ma |
-| `extinction_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_uncertainty_years` | Year-valued time field. | years |
-| `extinction_event_bin_standing_taxa` | Count field. | integer |
-| `extinction_boundary_bin_last_appearances` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_boundary_bin_extinction_intensity` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_disappearing_taxa` | Count field. | integer |
-| `extinction_disappearances_before_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_disappearances_after_boundary` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_mean_disappearance_lag_years` | Year-valued time field. | years |
-| `extinction_recovery_lag_years` | Year-valued time field. | years |
-| `forcing_event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_category` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_ma` | Age or duration field. | Ma |
-| `forcing_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_uncertainty_years` | Year-valued time field. | years |
-| `forcing_duration_ma` | Age or duration field. | Ma |
-| `forcing_confidence_level` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_source_doi` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `lag_years` | Year-valued time field. | years |
-| `abs_lag_years` | Year-valued time field. | years |
-| `lag_direction` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `uncertainty_overlap_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `combined_uncertainty_years` | Year-valued time field. | years |
-| `window_years` | Year-valued time field. | years |
-| `pair_key` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
-## `data/processed/uby_mass_extinction_lag_pairs.csv`
-
-- Rows: 8
-
-| Field | Description | Unit / convention |
-|---|---|---|
-| `extinction_event_id` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_ma_bp` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `extinction_uncertainty_years` | Year-valued time field. | years |
-| `forcing_event_id` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_event_name` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_subcategory` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_ma_bp` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_uby_value` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `forcing_uncertainty_years` | Year-valued time field. | years |
-| `lag_years` | Year-valued time field. | years |
-| `abs_lag_years` | Year-valued time field. | years |
-| `window_years` | Year-valued time field. | years |
-| `overlap_flag` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `lag_direction` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-| `source_pair_key` | Source or derived attribute; see dataset README and source script for exact derivation. | text |
-
 ## `data/processed/uby_unified_timeline.csv`
 
-- Rows: 1379280
+- Rows: 1586016
 
 | Field | Description | Unit / convention |
 |---|---|---|

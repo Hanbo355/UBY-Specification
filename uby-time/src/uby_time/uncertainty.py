@@ -5,7 +5,7 @@ UBY时间标注规范 - 不确定性量化与误差传播模块
 特别是在跨尺度时间转换过程中的误差管理。
 """
 
-from decimal import Decimal
+from decimal import Decimal, getcontext, localcontext
 from typing import Optional, Tuple, Union
 from dataclasses import dataclass
 from enum import Enum
@@ -32,9 +32,31 @@ class UncertaintyEstimate:
 
 
 def decimal_sqrt(d: Decimal) -> Decimal:
-    """计算Decimal的平方根"""
-    # 将Decimal转换为float进行平方根计算，然后再转回Decimal
-    return Decimal(str(math.sqrt(float(d))))
+    """Compute the square root of a Decimal using Newton's method.
+
+    This preserves Decimal precision without converting through float.
+    """
+    if d < 0:
+        raise ValueError("Cannot compute square root of negative number")
+    if d == 0:
+        return Decimal("0")
+
+    with localcontext() as ctx:
+        ctx.prec = max(getcontext().prec, 28)
+
+        # Initial guess from float, then refine with Newton's method.
+        x = Decimal(str(math.sqrt(float(d))))
+        if x == 0:
+            x = Decimal("1")
+
+        # Newton iteration: x_{n+1} = (x_n + d / x_n) / 2
+        for _ in range(50):
+            x_next = (x + d / x) / 2
+            if x_next == x:
+                break
+            x = x_next
+
+        return x
 
 
 class UncertaintyCalculator:

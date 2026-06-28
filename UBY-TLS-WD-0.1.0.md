@@ -10,10 +10,10 @@
 | Specification identifier | UBY-TLS |
 | Current version | 0.1.0 |
 | Release stage | Working Draft |
-| Release date | 2026-06-15 |
-| Scope of application | Cross-scale time labeling, long-term archival, auxiliary indexing for scientific data, and cosmological-geological-human-history narratives |
+| Release date | 2026-06-28 |
+| Scope of application | Cross-scale time labeling, long-term archival, auxiliary indexing for scientific data, cross-domain data integration, and cosmological-geological-human-history narratives |
 | Current status | Exploratory working draft; not yet a formal specification |
-| DOI | To be assigned |
+| DOI | 10.5281/zenodo.20763218 (dataset archive); specification DOI to be assigned |
 
 ---
 
@@ -37,7 +37,7 @@ When citing a specific expression, the specification version tag should also be 
 
 ### 0.1 Document Status
 
-This document is **Working Draft 0.1.0**. This version fixes the initial concepts, terminology, notation, anchors, data fields, and reference implementation requirements for UBY.
+This document is **Working Draft 0.1.0**. It formalizes the dual-track design principle, the unified timeline data model, the cross-domain JOIN methodology, the null-hypothesis testing protocol for cross-domain signals, the quality-control framework, the provenance and audit-trail requirements, the technical validation framework, the relationship to prior work, the anchor version migration protocol, and the incremental update mechanism.
 
 This document does not constitute a formal international standard, national standard, industry standard, or authoritative scientific data specification. Future versions may adjust fields, algorithms, examples, conformance levels, or notation.
 
@@ -63,7 +63,9 @@ Unless explicitly marked as informative, appendices, examples, and explanatory n
 
 UBY, the Universal Big-bang Year, is a conventional time-coordinate system for cross-scale time labeling. It uses the comoving-time origin in a cosmological model as the conventional zero point and the standard Julian year as the base unit, placing cosmic history, geological history, human history, and long-term future events on a monotonically increasing labeling axis.
 
-UBY is not designed to replace existing time systems. Instead, it provides a unified, traceable, and versioned auxiliary time label for cross-scale visualization, long-term archival, data indexing, public-science narratives, and interdisciplinary data exchange.
+UBY is not designed to replace existing time systems. Instead, it provides a unified, traceable, and versioned auxiliary time label for cross-scale visualization, long-term archival, data indexing, public-science narratives, interdisciplinary data exchange, and large-scale cross-domain data integration.
+
+A distinguishing feature of UBY is its **dual-track design**: a *semantic track* that retains all original time elements (unit, value, uncertainty, dating model, precision level), and a *numeric projection track* that projects every event onto a single real-valued axis anchored to the Big Bang. The semantic track preserves the fidelity of native time representations; the numeric projection track enables cross-domain proximity queries that are infeasible when each discipline retains only its native units.
 
 UBY MUST NOT be interpreted as model-independent absolute physical time. The meaning of a UBY value depends on:
 
@@ -87,7 +89,9 @@ This specification applies to the following scenarios:
 4. continuous time narratives in museums, education, public science, and digital humanities;
 5. interdisciplinary documents that need to reference calendar dates, Julian Dates, geological ages, redshift, or cosmic age simultaneously;
 6. auxiliary time anchors in records longer than ten thousand years, civilization archives, and ultra-long-term explanatory materials;
-7. cross-scale time labels in software systems, databases, visualizations, and APIs.
+7. cross-scale time labels in software systems, databases, visualizations, and APIs;
+8. **large-scale cross-disciplinary data integration where proximity-based JOIN across heterogeneous time units is required**;
+9. **reproducible data-mining pipelines that need a single sortable numeric axis across more than ten orders of magnitude in time**.
 
 ### 2.2 Out of Scope
 
@@ -130,6 +134,8 @@ The following documents are important references for this specification. Unless 
 7. McCarthy, D. D., & Seidelmann, P. K., *Time: From Earth Rotation to Atomic Physics*, Wiley-VCH, 2009.
 8. RFC 5234, *Augmented BNF for Syntax Specifications: ABNF*.
 9. Semantic Versioning 2.0.0.
+10. W3C, *RDF 1.1 Concepts and Abstract Data Model*, 2014. (Informative; referenced for comparison with ontology-based time frameworks in §24.)
+11. Wilkinson, M. D., et al., *The FAIR Guiding Principles for scientific data management and stewardship*, Scientific Data, 3, 160018, 2016. (Informative; referenced for the provenance framework in §22.)
 
 ---
 
@@ -229,6 +235,26 @@ The precision level describes the reliability source and applicable scope of a U
 
 Uncertainty expresses the error range, confidence level, or degree of model dependence of a UBY value. Uncertainty may originate from native measurements, model parameters, rounding rules, or combinations of multiple sources.
 
+### 4.11 Semantic Track
+
+The semantic track is the set of fields in a UBY record that preserve the native time representation. The semantic track fields are: `original_time_unit`, `original_time_value`, `original_error`, `uby_model`, `uby_precision_level`, `uby_precision_label`. The semantic track MUST be retained in any conformant unified timeline dataset.
+
+### 4.12 Numeric Projection Track
+
+The numeric projection track is the single real-valued field `uby_value` obtained by projecting a native time onto the UBY axis using the conversion algorithms of §11. The numeric projection track enables cross-domain proximity JOIN (§19) and large-scale numeric sorting.
+
+### 4.13 Dual-track Design
+
+The dual-track design is the UBY design principle whereby every record carries both a semantic track (§4.11) and a numeric projection track (§4.12). The two tracks are not interchangeable: the semantic track preserves fidelity; the numeric projection track enables computation. See §5.7 for the normative principle.
+
+### 4.14 Cross-domain JOIN
+
+A cross-domain JOIN is a database operation that retrieves records from two or more disciplines whose `uby_value` fields satisfy a proximity predicate (typically `|a.uby_value − b.uby_value| < τ`). Cross-domain JOIN is infeasible when each discipline retains only its native units.
+
+### 4.15 Null-hypothesis Test for Cross-domain Signals
+
+A null-hypothesis test for cross-domain signals is a statistical procedure that compares an observed cross-domain alignment against a randomized null model. The procedure is normatively defined in §20.
+
 ---
 
 ## 5. Design Principles
@@ -270,6 +296,23 @@ Implementations, documentation, and user interfaces MUST NOT describe UBY as:
 - a replacement for raw scientific data;
 - a legal or financial time basis;
 - a high-precision engineering time system.
+
+### 5.7 Dual-track Design Principle
+
+A conformant UBY dataset that integrates more than one discipline MUST carry both tracks for every record:
+
+1. **Semantic track** — the original native time fields (unit, value, uncertainty) plus UBY precision metadata (model, precision level, precision label). These fields preserve the fidelity of the source. They MUST NOT be derived from or overwritten by the numeric projection track.
+2. **Numeric projection track** — a single real-valued `uby_value` field obtained by applying the conversion algorithms of §11 to the semantic track. This field is the *only* field used for cross-domain proximity JOIN (§19), sorting, and numeric comparison across disciplines.
+
+The dual-track design is **not** a redundant pair of representations: each track serves a distinct, non-substitutable role. Removing the semantic track destroys fidelity (an event's `uby_value` of `135715499995.6` cannot be inverted to recover `±0.4 Ma` uncertainty or `stratigraphic` dating method); removing the numeric projection track destroys cross-domain joinability.
+
+Implementations MAY additionally expose the dual tracks as a layered API: the semantic track as a structured object, the numeric projection track as a scalar index column. Both layers MUST be backed by the same underlying record.
+
+A dataset that carries only `uby_value` and discards the native fields is **non-conformant** with this specification from version 0.1.0 onward.
+
+### 5.8 Cross-domain Falsifiability Principle
+
+Any claim of a cross-domain temporal signal derived from UBY alignment MUST be accompanied by a null-hypothesis test as specified in §20. Observed alignments that fail the null-hypothesis test MUST be reported as non-significant and MUST NOT be described as discoveries.
 
 ---
 
@@ -575,7 +618,7 @@ Examples:
 
 ### 10.1 Default Anchor
 
-This specification, Working Draft 0.1.0, defines the following default anchor:
+This specification, Working Draft 0.1.0, defines the default anchor as follows:
 
 ```text
 Anchor ID: UBY-ANCHOR-2026-01-01Z
@@ -609,14 +652,7 @@ Default year-level anchor: 13787000000 + 2026 = 13787002026
 
 ### 10.3 Anchor Changes
 
-If a future specification or model adopts a new anchor, it MUST provide:
-
-1. new anchor ID;
-2. old anchor ID;
-3. offset;
-4. applicable precision level;
-5. whether Level 3 is affected;
-6. migration notes.
+If a future specification or model adopts a new anchor, it MUST follow the migration protocol in §25.
 
 ---
 
@@ -650,165 +686,161 @@ If only year-level labeling is required, the following formula MAY be used:
 UBY_year = 13787000000 + astronomical_year
 ```
 
-Examples:
+### 11.5 BCE/CE to UBY
 
-| Native year | Astronomical year | Year-level UBY value |
-| --- | ---: | ---: |
-| CE 2026 | 2026 | 13787002026 |
-| CE 1 | 1 | 13787000001 |
-| 1 BC | 0 | 13787000000 |
-| 221 BC | -220 | 13786999780 |
-
-This formula applies only to Level 1 year-level precision contexts.
-
-### 11.5 Redshift to UBY
-
-Conversion from redshift to UBY MUST compute the age of the universe at redshift `z` using a cosmological model.
-
-General form:
+For a traditional BC year `n` (where 1 BC is the year immediately before CE 1):
 
 ```text
-UBY(z) = t(z)
+astronomical_year = 1 - n
+UBY_year = 13787000000 + (1 - n)
 ```
 
-where `t(z)` is the comoving time elapsed from the model origin to redshift `z`, converted to standard Julian years.
+Example: 221 BC → astronomical year -220 → `UBY 13786999780 [spec=0.1.0]`.
 
-In a flat ΛCDM model, it can be expressed as:
+### 11.6 BP / ka BP / Ma BP / Ga BP to UBY
+
+For a value `t_bp` expressed in years before present, where "present" is defined as the anchor year (2026 by default):
 
 ```text
-t(z) = 1/H0 × ∫[z,∞] dz' / ((1+z')E(z'))
-E(z) = sqrt(Ωm(1+z)^3 + Ωr(1+z)^4 + ΩΛ)
+UBY = 13787002026.0 - t_bp_years
 ```
 
-Implementers SHOULD prefer validated astronomical or cosmological computation libraries and SHOULD NOT use unvalidated handwritten integration in high-precision contexts.
+where `t_bp_years` is the BP value converted to Julian years. For `ka BP`, multiply by 1000; for `Ma BP`, by 10^6; for `Ga BP`, by 10^9.
 
-### 11.6 Difference Between Lookback Time and UBY
+### 11.7 Redshift to UBY (Level 3)
 
-Redshift lookback time is:
+For a redshift `z`, the corresponding UBY is computed from the cosmological comoving age at `z`:
 
 ```text
-lookback_time(z) = t0 - t(z)
+UBY(z) = age_of_universe_at_z=0 - age_of_universe_at_z
+       = t0 - t(z)
 ```
 
-The UBY value is:
+where `t(z)` is the comoving age at redshift `z` obtained from the cosmological model. The model version MUST be declared. UBY values computed from different cosmological models MUST NOT be directly compared.
+
+### 11.8 Decimal Calendar Year to UBY
+
+For a decimal calendar year `y` (e.g., 2026.5):
 
 ```text
-UBY(z) = t(z)
+UBY = 13787002026.0 + (y - 2026.0)
 ```
-
-The two MUST NOT be confused.
 
 ---
 
 ## 12. Rounding and Significant Digits
 
-### 12.1 Basic Rules
+### 12.1 Rounding Rule
 
-1. a UBY expression MUST NOT display more significant digits than supported by the native source material;
-2. Level 2 and Level 3 SHOULD be rounded according to the significant digits supported by the source and model;
-3. if the original source is approximate, the UBY output SHOULD also be approximate;
-4. data exchange SHOULD record the rounding rule;
-5. the display format MUST NOT imply nonexistent high precision.
+The default rounding rule is year-floor for Level 1 and significant-digit rounding for Level 2/3.
 
-### 12.2 Recommended Rounding Rules
+### 12.2 Significant Digits
 
-| Scenario | Recommended rule | Example |
-| --- | --- | --- |
-| Level 1 year-level labeling | Use integer astronomical years | CE 2026 → `UBY 13787002026 [spec=0.1.0]` |
-| JD exact conversion | Preserve decimal places consistent with the input time | ISO input at second-level precision may retain fractional years |
-| Geological event | Retain reasonable significant digits at ka, Ma, or Ga scale | 66.04 Ma BP |
-| High-redshift event | Retain significant digits supported by the model | `UBY 380K [model=LCDM-Planck2018] [spec=0.1.0]` |
-| Approximate source | Use approximate-level output | approximately 300,000 years ago |
+The number of significant digits in a UBY value MUST NOT exceed that supported by the source material. A value derived from a source with ±0.4 Ma uncertainty MUST NOT carry more than 7 significant digits.
 
-### 12.3 `year-floor`
+### 12.3 Display vs Storage
 
-`year-floor` means flooring to the year:
-
-```text
-floor(13787002026.7) = 13787002026
-```
-
-This rule is suitable for contexts that require only a year label. It MUST NOT be used for precise conversion requiring day, second, or finer granularity.
+Stored `uby_value` SHOULD preserve the full numeric precision of the conversion. Display formats (§7.2–7.6) MAY truncate or round for readability.
 
 ---
 
 ## 13. Data Model
 
-### 13.1 Minimum Data Fields
+### 13.1 Minimal UBY Record
 
-When UBY data are formally stored or exchanged, the following fields SHOULD be included at minimum:
+A minimal UBY record carries the numeric projection track and the minimum metadata for traceability:
 
-| Field | Type | Requirement | Example | Description |
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `uby_value` | REAL | MUST | Numeric projection track: years since the conventional zero point |
+| `model_version` | TEXT | MUST (L2/L3) | Cosmological model identifier |
+| `spec_version` | TEXT | SHOULD | Specification version, e.g. `0.1.0` |
+| `anchor_id` | TEXT | SHOULD | Anchor identifier used for conversion |
+
+### 13.2 Conformant Unified Timeline Event (Dual-track)
+
+A conformant unified timeline dataset that integrates more than one discipline MUST carry, for every record, the full dual-track schema:
+
+| Field | Type | Track | Required | Description |
 | --- | --- | --- | --- | --- |
-| `uby_value` | decimal/string | MUST | `13787002026.0` | Full numeric UBY value |
-| `uby_version` | string | MUST | `0.1.0` | Specification version |
-| `precision_level` | string | MUST | `Level 1` | Precision level |
-| `source_time` | string | SHOULD | `2026-01-01T00:00:00Z` | Native time |
-| `source_system` | string | SHOULD | `UTC` | Native time system |
-| `model_version` | string | conditionally MUST | `LCDM-Planck2018` | Required for Level 2/3 |
-| `rounding_rule` | string | SHOULD | `year-floor` | Rounding rule |
-| `generated_by` | string | SHOULD | `uby-time/0.1.0` | Generating tool |
+| `event_id` | INTEGER | — | MUST | Stable unique identifier within the dataset |
+| `event_name` | TEXT | — | MUST | Human-readable event label |
+| `event_category` | TEXT | — | MUST | Top-level discipline, e.g. `cosmology`, `geology`, `paleontology`, `paleoclimate`, `astronomy`, `paleoecology`, `instrumental`, `spaceflight` |
+| `event_subcategory` | TEXT | — | SHOULD | Fine-grained category, e.g. `model_origin`, `reference_milestone`, `eruption`, `occurrence` |
+| `original_time_unit` | TEXT | semantic | MUST | Native unit, e.g. `Ma BP`, `yr BP`, `decimal_year`, `redshift`, `BCE`, `JD` |
+| `original_time_value` | TEXT | semantic | MUST | Native value, preserved as text to avoid float precision loss |
+| `original_error` | TEXT | semantic | SHOULD | Native uncertainty, e.g. `±0.4 Ma`, `±5 yr` |
+| `uby_value` | REAL | numeric | MUST | Numeric projection onto the UBY axis |
+| `uby_value_text` | TEXT | numeric | SHOULD | Canonical UBY expression string, e.g. `UBY 13.721G [model=LCDM-Planck2018] [spec=0.1.0]` |
+| `uby_model` | TEXT | semantic | MUST (L2/L3) | Conversion model, e.g. `LCDM-Planck2018` |
+| `uby_precision_level` | INTEGER | semantic | MUST | Precision level 1/2/3 per §6 |
+| `uby_precision_label` | TEXT | semantic | SHOULD | Human-readable precision label |
+| `uby_mnemonic_iso` | TEXT | numeric | MAY | Academic mnemonic per §7.5 |
+| `source_dataset` | TEXT | provenance | MUST | Source dataset name |
+| `source_doi` | TEXT | provenance | SHOULD | DOI of the source dataset |
+| `source_record_id` | TEXT | provenance | MUST | Stable identifier within the source dataset |
+| `source_record_uri` | TEXT | provenance | SHOULD | Resolvable URI of the source record |
+| `description` | TEXT | — | MAY | Free-text description |
+| `attribution` | TEXT | provenance | SHOULD | Attribution string per the source license |
 
-### 13.2 Anchor Fields
+### 13.3 Field Roles
 
-The following fields are RECOMMENDED:
+- **Semantic track fields** (`original_time_unit`, `original_time_value`, `original_error`, `uby_model`, `uby_precision_level`, `uby_precision_label`) preserve native fidelity and MUST be sourced directly from the original record. They MUST NOT be derived from `uby_value`.
+- **Numeric projection track fields** (`uby_value`, `uby_value_text`, `uby_mnemonic_iso`) are derived from the semantic track via §11 algorithms and are used for sorting, indexing, and cross-domain JOIN.
+- **Provenance fields** (`source_dataset`, `source_doi`, `source_record_id`, `source_record_uri`, `attribution`) support the audit trail (§22).
 
-| Field | Example |
-| --- | --- |
-| `anchor_id` | `UBY-ANCHOR-2026-01-01Z` |
-| `anchor_jd` | `2461041.5` |
-| `anchor_uby` | `13787002026.0` |
-| `anchor_model` | `LCDM-Planck2018` |
+### 13.4 Storage Format
 
-### 13.3 Uncertainty Fields
+A conformant dataset MAY be stored in any of:
 
-The following fields are RECOMMENDED:
+- SQLite (RECOMMENDED for medium-scale datasets, up to ~10^7 records);
+- Parquet (RECOMMENDED for larger datasets);
+- CSV with a sidecar JSON Schema (acceptable for exchange only).
 
-| Field | Example | Description |
+In all cases, the `uby_value` column MUST be indexed for range queries.
+
+### 13.5 Conformance Levels for Datasets
+
+| Level | Name | Requirement |
 | --- | --- | --- |
-| `uncertainty_years` | `50` | Symmetric uncertainty in years |
-| `interval_start_uby` | `13787001968.6` | Lower interval bound |
-| `interval_end_uby` | `13787001969.4` | Upper interval bound |
-| `confidence_level` | `0.95` | Confidence level |
-| `uncertainty_kind` | `measurement` | Measurement, model, or combined |
-| `propagation_note` | `model-dependent` | Error propagation note |
-
-If both an interval and a symmetric uncertainty are provided, the interval SHOULD take precedence.
+| **C0** | Minimal | Carries `uby_value` + `model_version` only. Acceptable for single-discipline datasets. |
+| **C1** | Provenance | C0 + provenance fields. Acceptable for archival. |
+| **C2** | Dual-track conformant | Full schema of §13.2. REQUIRED for any cross-disciplinary unified timeline dataset claiming conformance to this specification from 0.1.0 onward. |
 
 ---
 
 ## 14. JSON Representation
 
-### 14.1 Level 1 Example
+### 14.1 Minimal JSON
 
 ```json
 {
-  "uby_value": "13787002026.0",
-  "uby_version": "0.1.0",
-  "precision_level": "Level 1",
-  "source_time": "2026-01-01T00:00:00Z",
-  "source_system": "UTC",
-  "model_version": "LCDM-Planck2018",
-  "anchor_id": "UBY-ANCHOR-2026-01-01Z",
-  "rounding_rule": "exact-from-jd",
-  "generated_by": "uby-time/0.1.0"
+  "uby_value": 13787002026.0,
+  "model": "LCDM-Planck2018",
+  "spec": "0.1.0"
 }
 ```
 
-### 14.2 Level 3 Example
+### 14.2 Conformant Dual-track JSON
 
 ```json
 {
-  "uby_value": "380000",
-  "uby_version": "0.1.0",
-  "precision_level": "Level 3",
-  "source_time": "z=1100",
-  "source_system": "redshift",
-  "model_version": "LCDM-Planck2018",
-  "rounding_rule": "effective-digits",
-  "uncertainty_kind": "model",
-  "propagation_note": "requires re-computation when cosmological parameters change",
-  "generated_by": "uby-time/0.1.0"
+  "event_id": 1,
+  "event_name": "End-Cretaceous extinction",
+  "event_category": "paleontology",
+  "original_time_unit": "Ma BP",
+  "original_time_value": "66.04",
+  "original_error": "±0.04 Ma",
+  "uby_value": 13786999780.0,
+  "uby_value_text": "UBY 13.721G [model=LCDM-Planck2018] [spec=0.1.0]",
+  "uby_model": "LCDM-Planck2018",
+  "uby_precision_level": 2,
+  "uby_precision_label": "cross-scale proportional narrative",
+  "source_dataset": "PBDB",
+  "source_doi": "10.5281/zenodo.XXXXXXX",
+  "source_record_id": "occ:XXXXX",
+  "source_record_uri": "https://paleobiodb.org/classic/basic/occasion_single?id=XXXXX",
+  "attribution": "Creative Commons CC-BY 4.0"
 }
 ```
 
@@ -816,150 +848,71 @@ If both an interval and a symmetric uncertainty are provided, the interval SHOUL
 
 ## 15. Conformance
 
-### 15.1 Conformance Levels
+### 15.1 Conformance Targets
 
-This specification defines three conformance levels.
+This specification defines three conformance targets:
 
-| Level | Name | Requirements |
-| --- | --- | --- |
-| C0 | Display Conformance | Correctly displays UBY expressions and retains version and model tags |
-| C1 | Data Conformance | Supports full numeric values, metadata fields, precision levels, and basic validation |
-| C2 | Computational Conformance | Supports normative conversion algorithms, parsing, serialization, anchors, and uncertainty handling |
+1. **UBY expression parser** — a software component that parses UBY expressions conforming to §7 and Appendix A.
+2. **UBY converter** — a software component that converts native time to UBY and back, conforming to §11.
+3. **UBY unified timeline dataset** — a dataset that integrates two or more disciplines and conforms to §13.
 
-### 15.2 C0: Display Conformance
+### 15.2 Conformance Levels
 
-A C0 implementation MUST:
+| Level | Name | Applicable to | Requirement |
+| --- | --- | --- | --- |
+| **C0** | Minimal | parsers, converters, single-discipline datasets | Parses/converts per §7 and §11 |
+| **C1** | Provenance | converters, datasets | C0 + provenance fields per §22 |
+| **C2** | Dual-track | cross-disciplinary datasets | C1 + full dual-track schema per §13.2 |
 
-1. display full numeric UBY values;
-2. display `[spec=...]`;
-3. display `[model=...]` for Level 2/3;
-4. not remove copyright, source, or native-time descriptions;
-5. not claim that UBY is absolute time.
-
-### 15.3 C1: Data Conformance
-
-A C1 implementation MUST satisfy C0 and additionally:
-
-1. support the minimum data fields;
-2. support JSON or an equivalent structured representation;
-3. record the precision level;
-4. record the native time system;
-5. validate whether Level 2/3 declares a model version;
-6. identify the risk of a missing specification version.
-
-### 15.4 C2: Computational Conformance
-
-A C2 implementation MUST satisfy C1 and additionally:
-
-1. implement JD ↔ UBY conversion;
-2. implement ISO 8601 → UBY conversion;
-3. implement astronomical-year and BC-year conversion;
-4. support parsing of UBY expressions;
-5. support anchor metadata;
-6. support uncertainty fields;
-7. provide test-vector validation;
-8. declare the library and parameter source used for Level 3 model computation.
+A cross-disciplinary unified timeline dataset that claims conformance to UBY-TLS 0.1.0 MUST meet C2.
 
 ---
 
 ## 16. Interoperability Requirements
 
-### 16.1 Expression Interoperability
+### 16.1 With ISO 8601
 
-Different implementations that generate the same UBY expression SHOULD produce the same UBY value when the specification version, model version, anchor, input time, and rounding rule are identical.
+Implementations MUST support bidirectional conversion between ISO 8601 timestamps and UBY via JD (§11.1, §11.3).
 
-### 16.2 Metadata Interoperability
+### 16.2 With Julian Date
 
-Implementers MUST NOT exchange bare UBY values alone. Formal data exchange SHOULD exchange the following together:
+Implementations MUST support bidirectional conversion between JD and UBY (§11.1, §11.2).
 
-1. `uby_value`;
-2. `uby_version`;
-3. `precision_level`;
-4. `model_version`;
-5. `source_time`;
-6. `source_system`;
-7. `rounding_rule`;
-8. `anchor_id` or equivalent anchor information.
+### 16.3 With Geological Time Scales
 
-### 16.3 Parser Behavior
+Implementations SHOULD support conversion from ICS chronostratigraphic ages to UBY via the `Ma BP` / `Ga BP` algorithm (§11.6).
 
-A parser SHOULD emit warnings for the following cases:
+### 16.4 With Cosmological Redshift
 
-1. missing `[spec=...]`;
-2. missing `[model=...]` for Level 2/3;
-3. mnemonic prefix inconsistent with model version;
-4. numeric precision obviously exceeding the source support;
-5. syntactically valid but semantically incomplete expression;
-6. conflict between outer metadata and inline tags.
+Implementations SHOULD support conversion from redshift `z` to UBY using a declared cosmological model (§11.7).
+
+### 16.5 With BP Notation
+
+Implementations MUST support conversion from `yr BP` / `ka BP` / `Ma BP` / `Ga BP` to UBY (§11.6), where "present" is the anchor year (2026 by default).
+
+### 16.6 With Database Systems
+
+A conformant dataset stored in a relational database MUST expose `uby_value` as a real-valued indexed column. Cross-domain JOIN (§19) MUST be expressible as a single SQL statement without per-record unit conversion in the query.
 
 ---
 
 ## 17. Version Management
 
-### 17.1 Version Number Format
+### 17.1 Specification Version
 
-This specification uses semantic versioning:
+The specification version follows Semantic Versioning 2.0.0:
 
-```text
-MAJOR.MINOR.PATCH
-```
+- MAJOR: incompatible changes to the conversion algorithms, anchor, or conformance schema;
+- MINOR: backward-compatible additions (e.g., new sections, new optional fields);
+- PATCH: backward-compatible corrections and clarifications.
 
-Examples:
+### 17.2 Model Version
 
-```text
-0.1.0
-1.0.0
-1.0.0-rc.1
-```
+The model version is independent of the specification version. Multiple model versions MAY coexist under a single specification version.
 
-### 17.2 Major Version
+### 17.3 Implementation Version
 
-The following changes MUST increment the major version:
-
-1. changing the definition of the UBY zero point;
-2. changing the base unit;
-3. changing the default anchor in a way that cannot be made compatible through metadata;
-4. breaking the existing expression syntax;
-5. deleting or redefining mandatory fields;
-6. changing the meaning of precision levels;
-7. changing core conversion algorithms.
-
-### 17.3 Minor Version
-
-The following changes SHOULD increment the minor version:
-
-1. adding optional fields;
-2. adding notation forms;
-3. adding conformance levels;
-4. adding test vectors;
-5. adding model tag rules;
-6. adding domain profiles.
-
-### 17.4 Patch Version
-
-The following changes SHOULD increment the patch version:
-
-1. correcting documentation errors;
-2. clarifying wording;
-3. correcting typographical errors in examples;
-4. supplementing references;
-5. correcting formatting or cross-references.
-
-### 17.5 Release Stages
-
-| Stage | Name | Meaning |
-| --- | --- | --- |
-| ED | Exploratory Draft | Exploratory draft |
-| WD | Working Draft | Working draft |
-| PRD | Public Review Draft | Public review draft |
-| RC | Release Candidate | Release candidate |
-| SPEC | Specification | Formal specification |
-
-The current version is:
-
-```text
-UBY-TLS-WD-0.1.0
-```
+The implementation (software) version is independent of both the specification and model versions.
 
 ---
 
@@ -990,6 +943,372 @@ RECOMMENDED author credit:
 ```text
 Han Bo
 ```
+
+### 18.6 Cross-domain Spurious Correlation Risk
+
+Cross-domain proximity JOIN (§19) can produce alignments that are statistically expected rather than physically meaningful. Any cross-domain alignment reported as a signal MUST be accompanied by a null-hypothesis test (§20). Implementations and publications MUST NOT report cross-domain alignments as discoveries without such a test.
+
+---
+
+## 19. Cross-domain JOIN Methodology
+
+### 19.1 Motivation
+
+When two disciplines use incompatible time units (e.g., `Ma BP` in paleontology and `decimal_year` in astronomy), proximity JOIN between their records is infeasible without a unifying axis. The UBY numeric projection track provides such an axis.
+
+### 19.2 Definition
+
+A **cross-domain proximity JOIN** between two record sets A and B is the set of pairs `(a, b)` such that:
+
+```text
+|a.uby_value - b.uby_value| < τ
+```
+
+where `τ` is the proximity threshold in Julian years.
+
+### 19.3 Reference SQL
+
+The reference SQL form is:
+
+```sql
+SELECT a.event_name, b.event_name, ABS(a.uby_value - b.uby_value) AS delta
+FROM uby_events a
+JOIN uby_events b
+  ON a.event_category = :cat_a
+ AND b.event_category = :cat_b
+ AND ABS(a.uby_value - b.uby_value) < :tau
+ORDER BY delta;
+```
+
+### 19.4 Threshold Selection
+
+The threshold `τ` SHOULD be chosen with reference to the coarser of the two precision levels:
+
+- Level 1 × Level 1: `τ` in the order of years;
+- Level 1 × Level 2: `τ` in the order of 10^5 years;
+- Level 2 × Level 2: `τ` in the order of 10^5–10^6 years;
+- Level 3 × any: comparison requires explicit model declaration and `τ` in the order of 10^6 years or larger.
+
+Implementations SHOULD record the chosen `τ` and the precision levels of both sides in the result metadata.
+
+### 19.5 Required Output Fields
+
+Every cross-domain JOIN result set MUST include:
+
+- `a.event_name`, `b.event_name`;
+- `a.uby_value`, `b.uby_value`;
+- `delta = ABS(a.uby_value - b.uby_value)`;
+- `a.event_category`, `b.event_category`;
+- `a.uby_precision_level`, `b.uby_precision_level`;
+- `tau` (the threshold used);
+- `null_test_result` (per §20): one of `not_tested`, `significant`, `not_significant`.
+
+### 19.6 Limitations
+
+Cross-domain JOIN establishes **temporal proximity**, not **causal relation**. A pair `(a, b)` satisfying the proximity predicate does not imply that `a` caused `b`, or that the two events share a physical mechanism. Any causal claim requires independent physical evidence.
+
+---
+
+## 20. Null-hypothesis Testing for Cross-domain Signals
+
+### 20.1 Motivation
+
+Cross-domain proximity JOINs will, in general, produce non-zero alignment counts even when the two record sets are statistically independent. This is because both sets often concentrate in the same temporal window (e.g., both the modern astronomical record and the modern volcanic record concentrate in 1990–2025). A null-hypothesis test is required to distinguish signal from sampling bias.
+
+### 20.2 Reference Procedure
+
+The reference null-hypothesis test is a **Monte Carlo label-permutation test** with the following protocol:
+
+1. Let `T_a = {a_i.uby_value}` and `T_b = {b_j.uby_value}` be the UBY value sets of the two record sets.
+2. Let `N_obs = |{(i, j) : |a_i - b_j| < τ}|` be the observed cross-alignment count.
+3. Under the null hypothesis `H0` that the A/B labels are exchangeable, pool the combined set `T = T_a ∪ T_b` and randomly reassign `|T_a|` values to set A and `|T_b|` values to set B. This preserves the pooled temporal concentration while breaking the A-B distinction.
+
+   > **Rationale.** A bootstrap that resamples `T_b` from its own empirical distribution is degenerate for the alignment-count statistic: `E[N_mc] = N_obs` by linearity, so the z-score is identically zero and the test can never reject. The label-permutation null avoids this degeneracy because it redistributes the pooled values across the two sets, producing a meaningful null distribution whose mean is strictly less than `N_obs` whenever genuine co-location exists.
+
+4. For each of `M` Monte Carlo iterations (RECOMMENDED `M ≥ 1000`), compute the cross-alignment count `N_mc`.
+5. Compute the null distribution mean `μ` and standard deviation `σ` of `N_mc`.
+6. Compute the z-score: `z = (N_obs - μ) / σ`.
+7. Compute the empirical p-value: `p = (1 + |{m : N_mc[m] >= N_obs}|) / (M + 1)`.
+
+### 20.3 Significance Decision
+
+| Condition | Decision |
+| --- | --- |
+| `z < 0` | Observed alignment is **below random expectation**. NOT significant. |
+| `0 <= z < 2` | Observed alignment is **within random expectation**. NOT significant. |
+| `2 <= z < 3` | **Weak signal**. Report with caution; multiple-testing correction required. |
+| `z >= 3` AND `p < 0.01` | **Significant signal**. May be reported as a candidate discovery, subject to physical-mechanism validation. |
+
+### 20.4 Multiple-testing Correction
+
+If the same dataset is tested against `K` different cross-domain partners, a Bonferroni or Benjamini-Hochberg correction MUST be applied to the per-test significance threshold.
+
+### 20.5 Physical-mechanism Validation
+
+A statistically significant cross-domain alignment MUST NOT be reported as a scientific discovery without an independent, documented physical mechanism that plausibly links the two event classes. Statistical significance is necessary but not sufficient.
+
+### 20.6 Reference Implementation
+
+A reference implementation of this test MUST expose:
+
+- the observed alignment count `N_obs`;
+- the null distribution `(μ, σ)`;
+- the z-score;
+- the empirical p-value;
+- the Monte Carlo iteration count `M`;
+- the chosen threshold `τ`;
+- the precision levels of both record sets.
+
+---
+
+## 21. Quality-control Framework
+
+### 21.1 Scope
+
+This section defines the minimum quality-control (QC) requirements for a conformant UBY unified timeline dataset.
+
+### 21.2 Physical-bound Filters
+
+Each `event_category` SHOULD declare a physical upper and lower bound on `uby_value`. Records outside these bounds MUST be either filtered out or flagged with a `qc_flag` field.
+
+| Category | Lower bound (UBY) | Upper bound (UBY) | Rationale |
+| --- | --- | --- | --- |
+| cosmology | 0 | 13,787,002,026 | Cannot predate Big Bang or postdate present |
+| astronomy (stellar age) | 0 | 13,787,002,026 | Stellar age cannot exceed cosmic age |
+| geology | 9,200,000,000 | 13,787,002,026 | Solar System formation to present |
+| paleontology | 12,870,000,000 | 13,787,002,026 | Phanerozoic to present |
+| instrumental | 13,786,999,026 | 13,787,002,026 | ~1000 yr CE to present |
+
+### 21.3 Outlier Detection
+
+Records whose `uby_value` violates the physical bound MUST be quarantined. A quarantine log MUST record:
+
+- `event_id`;
+- `original_time_value`;
+- computed `uby_value`;
+- the bound violated;
+- the action taken (`dropped`, `flagged`, `corrected`).
+
+### 21.4 Completeness Audit
+
+A conformant dataset MUST report:
+
+- total record count per `event_category`;
+- count of records missing each semantic-track field;
+- count of records missing each provenance field;
+- count of records flagged by physical-bound filters.
+
+### 21.5 Reproducibility Audit
+
+A conformant dataset MUST ship with a `metadata.json` sidecar that records:
+
+- the UBY specification version;
+- the model version;
+- the anchor identifier;
+- the build timestamp (UTC);
+- the source dataset list with per-source record counts;
+- the QC summary per §21.4;
+- the software version that produced the dataset.
+
+---
+
+## 22. Provenance and Audit Trail
+
+### 22.1 Per-record Provenance
+
+Every record in a conformant unified timeline dataset MUST carry:
+
+- `source_dataset`: the name of the originating dataset;
+- `source_record_id`: a stable identifier that uniquely identifies the record within the source dataset;
+- `source_doi` (SHOULD): the DOI of the source dataset;
+- `source_record_uri` (SHOULD): a resolvable URI of the source record;
+- `attribution` (SHOULD): the attribution string required by the source license.
+
+### 22.2 Dataset-level Provenance
+
+A conformant dataset MUST ship with a `PROVENANCE.md` (or equivalent machine-readable) document that records:
+
+- every source dataset's name, version, release date, DOI, license;
+- the transformation pipeline used to produce the unified dataset;
+- the software version(s) used;
+- the build timestamp;
+- the QC summary per §21.
+
+### 22.3 FAIR Alignment
+
+A conformant dataset SHOULD align with the FAIR principles:
+
+- **Findable**: persistent identifiers (DOI) for the dataset and its sources;
+- **Accessible**: open access via a recognized repository (Zenodo, Figshare, Dryad);
+- **Interoperable**: the dual-track schema of §13.2 enables cross-disciplinary JOIN;
+- **Reusable**: per-source licenses and attributions are preserved per record.
+
+### 22.4 Audit Log
+
+For datasets intended for long-term archival, an audit log SHOULD be maintained that records every rebuild, every QC filter action, and every anchor migration (per §25).
+
+---
+
+## 23. Technical Validation Framework
+
+### 23.1 Scope
+
+This section defines the minimum technical validation that a conformant UBY dataset MUST undergo and document.
+
+### 23.2 Conversion Validation
+
+For each conversion path (§11.1–11.8), a test suite MUST verify:
+
+- the round-trip identity: `convert_back(convert_forward(x)) ≈ x` within the declared precision;
+- the minimum test vectors of Appendix C;
+- the model-dependence declaration for Level 3 paths.
+
+### 23.3 Cross-domain JOIN Validation
+
+A conformant dataset MUST include at least one worked example of a cross-domain JOIN (§19), together with the null-hypothesis test result (§20). The example MUST be reproducible from the published dataset and code.
+
+### 23.4 Sampling-bias Validation
+
+For any cross-domain signal reported as significant (§20.3), the validation MUST include:
+
+- a check that the signal is not an artifact of shared temporal concentration (e.g., both record sets concentrated in 1990–2025);
+- a sensitivity analysis on the threshold `τ`;
+- a multiple-testing correction if more than one cross-domain partner was tested.
+
+### 23.5 Rebuild Reproducibility
+
+Two independent rebuilds of the dataset from the same sources and software version MUST produce byte-identical `uby_value` fields (allowing for floating-point representation differences of less than 1 ULP).
+
+---
+
+## 24. Relationship to Prior Work
+
+### 24.1 Cosmic Calendar (Sagan, 1977)
+
+The Cosmic Calendar maps the cosmic history onto a single calendar year for popular-science visualization. UBY shares the conceptual choice of the Big Bang as the zero point, but differs in three respects:
+
+1. UBY is a queryable numeric axis, not a visualization metaphor;
+2. UBY carries the dual-track schema (§13) preserving native time fields;
+3. UBY defines a formal conversion specification (§11) and conformance levels (§15).
+
+### 24.2 Unified Time Framework (UTF, Wang et al., 2022)
+
+The Unified Time Framework proposes an ontology-based time framework for the geosciences, with six time elements (time type, expression, reference, unit, uncertainty, dating method) organized as RDF/OWL nodes queried via SPARQL. UBY and UTF adopt **complementary design philosophies**:
+
+| Dimension | UTF | UBY |
+| --- | --- | --- |
+| Design philosophy | Ontology-based; preserves semantic diversity | Dual-track; preserves semantic diversity **and** adds a numeric projection |
+| Data model | RDF triples + 6-element ontology | Relational; semantic-track columns + single `uby_value` column |
+| Query language | SPARQL | SQL |
+| Numeric projection | Not provided | Provided (`uby_value`) |
+| Cross-domain JOIN | Not supported directly | Supported (§19) |
+| Null-hypothesis testing | Not provided | Provided (§20) |
+| Published dataset | Not released | Reference implementation ships a C2-conformant unified timeline dataset |
+| Discipline coverage | Geosciences (geology, geography, paleontology) | Cosmology, astronomy, geology, paleontology, paleoclimate, paleoecology, volcanology, instrumental, spaceflight |
+| Temporal span | Phanerozoic + human history (~5×10^8 yr) | 17 orders of magnitude (Big Bang to present) |
+
+UBY does **not** claim conceptual novelty over UTF for the idea of unifying time across disciplines. UBY's contributions relative to UTF are:
+
+1. instantiating the unified-time concept as a 1.5M+-record cross-disciplinary database;
+2. anchoring the time axis to a physical reference (Big Bang = 0) rather than an abstract root node;
+3. adding the numeric projection track and the cross-domain JOIN methodology (§19);
+4. adding the null-hypothesis testing protocol for cross-domain signals (§20).
+
+### 24.3 Universal Space-Time Referencing System (USTRS)
+
+USTRS proposes a universal space-time encoding for navigation and deep-space applications. UBY shares the choice of a cosmological origin but differs in scope: USTRS targets space-time positioning for navigation, while UBY targets cross-disciplinary data integration. The two are not directly comparable.
+
+### 24.4 ISO 8601, JD, ICS
+
+UBY is a supplementary layer that interoperates with these established systems per §16. It does not replace them.
+
+### 24.5 Positioning Statement
+
+UBY is best understood as a **physical-coordinate complement** to ontology-based time frameworks such as UTF: it preserves the semantic fidelity that UTF provides, while adding a numeric projection that enables cross-domain proximity queries at scale. UBY is suitable for large-scale cross-disciplinary data integration and proximity-based data mining; UTF remains suitable for knowledge-graph construction and semantic reasoning.
+
+---
+
+## 25. Anchor Version Migration Protocol
+
+### 25.1 When Migration Is Required
+
+Anchor migration is required when:
+
+1. the cosmological model parameters change (e.g., Planck 2018 → Planck 2025);
+2. the anchor reference epoch changes (e.g., 2026-01-01 → 2030-01-01);
+3. the Julian-year definition is revised (unlikely; would be a MAJOR version change).
+
+### 25.2 Migration Record
+
+A migration MUST be recorded with the following fields:
+
+| Field | Description |
+| --- | --- |
+| `migration_id` | Unique identifier for the migration |
+| `old_anchor_id` | Identifier of the previous anchor |
+| `new_anchor_id` | Identifier of the new anchor |
+| `old_uby_value` | Sample UBY value under the old anchor |
+| `new_uby_value` | Sample UBY value under the new anchor |
+| `offset` | `new_uby_value - old_uby_value` (a constant for all records) |
+| `affected_precision_levels` | Subset of {1, 2, 3} |
+| `migration_date` | UTC timestamp |
+| `migration_software_version` | Software version that performed the migration |
+| `migration_notes` | Free-text notes |
+
+### 25.3 Migration Procedure
+
+1. Freeze the old dataset and archive it.
+2. Compute the constant offset between the old and new anchors.
+3. For every record, set `new_uby_value = old_uby_value + offset`.
+4. Update `uby_value_text` and `uby_mnemonic_iso` per §7.
+5. Update `anchor_id`, `model_version`, and `spec_version` fields.
+6. Run the QC checks of §21 on the migrated dataset.
+7. Publish the migration record per §25.2.
+
+### 25.4 Compatibility
+
+If only the anchor reference epoch changes (e.g., 2026 → 2030), Level 1 records are affected by a constant offset; Level 2/3 records may or may not be affected depending on whether the model parameters also change. The migration record MUST declare which precision levels are affected.
+
+### 25.5 Backward Compatibility
+
+Datasets built under an older anchor remain valid for archival use, but cross-dataset JOINs between records built under different anchors MUST NOT be performed without migration. Implementations SHOULD detect anchor mismatches via the `anchor_id` field and refuse the JOIN or trigger migration.
+
+---
+
+## 26. Incremental Update Mechanism
+
+### 26.1 When Incremental Update Is Permitted
+
+Incremental update (appending new records without rebuilding the entire dataset) is permitted when:
+
+1. the anchor has not changed (per §25);
+2. the model version has not changed;
+3. the new records conform to the same schema (§13.2);
+4. the new records have been QC-checked per §21.
+
+### 26.2 Update Procedure
+
+1. Validate new records against the schema (§13.2) and QC bounds (§21.2).
+2. Append new records with monotonically increasing `event_id`.
+3. Update the dataset's `metadata.json` with:
+   - the new total record count;
+   - the new source dataset list (if a new source was added);
+   - the update timestamp;
+   - the software version that performed the update.
+4. Re-run the cross-domain JOIN validation (§23.3) on a sample to confirm no regressions.
+
+### 26.3 When Full Rebuild Is Required
+
+A full rebuild is REQUIRED when:
+
+- the anchor changes (per §25);
+- the model version changes;
+- the specification version introduces an incompatible schema change;
+- a QC filter is retroactively applied to existing records.
+
+### 26.4 Versioning of Incremental Updates
+
+Each incremental update SHOULD be assigned a build identifier of the form `<dataset-version>+<update-sequence>`, e.g., `v0.1.0+001`. The build identifier MUST be recorded in `metadata.json`.
 
 ---
 
@@ -1067,6 +1386,7 @@ This appendix is normative. C2-conformant implementations SHOULD pass the follow
 | Astronomical year `1` | `UBY 13787000001 [spec=0.1.0]` |
 | Astronomical year `0` | `UBY 13787000000 [spec=0.1.0]` |
 | `221 BC` | `UBY 13786999780 [spec=0.1.0]` |
+| `66.04 Ma BP` | `UBY 13786999780 [spec=0.1.0]` (Level 2; precision floor) |
 | Mnemonic `UBY 137870+002026 [spec=0.1.0]` | `UBY 13787002026 [spec=0.1.0]` |
 | Mnemonic `UBY 137870-000220 [spec=0.1.0]` | `UBY 13786999780 [spec=0.1.0]` |
 
@@ -1087,7 +1407,9 @@ An official or reference implementation SHOULD satisfy the following requirement
 7. minimum test vectors SHOULD be provided;
 8. expression parsing and linting capabilities SHOULD be provided;
 9. uncertainty fields SHOULD be provided;
-10. the implementation MUST NOT claim that UBY is absolute time or a high-precision timekeeping system.
+10. the implementation MUST NOT claim that UBY is absolute time or a high-precision timekeeping system;
+11. **a C2-conformant unified timeline dataset SHOULD ship with a `metadata.json` sidecar per §21.5 and a `PROVENANCE.md` per §22.2**;
+12. **the implementation SHOULD provide a cross-domain JOIN helper and a null-hypothesis test utility per §19 and §20**.
 
 ---
 
@@ -1111,6 +1433,27 @@ UBY 13787002026.0 [model=LCDM-Planck2018] [spec=0.1.0]
 UBY 137870+002026 [model=LCDM-Planck2018] [spec=0.1.0]
 ```
 
+Cross-domain JOIN example (per §19):
+
+```python
+from uby_time.cross_domain import cross_domain_join, null_hypothesis_test
+
+result = cross_domain_join(
+    db="uby_unified_timeline.sqlite",
+    cat_a="astronomy",
+    cat_b="geology",
+    tau_years=1.0,
+)
+test = null_hypothesis_test(
+    db="uby_unified_timeline.sqlite",
+    cat_a="astronomy",
+    cat_b="geology",
+    tau_years=1.0,
+    n_mc=1000,
+)
+print(result, test)
+```
+
 CLI examples:
 
 ```bash
@@ -1118,6 +1461,8 @@ uby convert iso 2026-01-01T00:00:00Z
 uby convert bc 221
 uby parse "UBY 380K [model=LCDM-Planck2018] [spec=0.1.0]"
 uby validate "UBY 137870+002026 [model=LCDM-Planck2018] [spec=0.1.0]"
+uby cross-join --cat-a astronomy --cat-b geology --tau 1.0
+uby null-test --cat-a astronomy --cat-b geology --tau 1.0 --n-mc 1000
 ```
 
 ---
@@ -1137,7 +1482,10 @@ Before entering `Public Review Draft 0.9.0`, the following work is RECOMMENDED:
 7. separate the specification, reference implementation, and research data;
 8. complete external technical review;
 9. apply for a DOI;
-10. publish conformance test tools.
+10. publish conformance test tools;
+11. **publish a reference implementation of the cross-domain JOIN helper (§19) and the null-hypothesis test utility (§20)**;
+12. **publish a worked example of an anchor migration (§25) with a real offset**;
+13. **collect at least one third-party usage report**.
 
 Before entering `Specification 1.0.0`, the following items SHOULD be frozen:
 
@@ -1148,7 +1496,10 @@ Before entering `Specification 1.0.0`, the following items SHOULD be frozen:
 5. mandatory metadata fields;
 6. JD ↔ UBY conversion algorithm;
 7. conformance levels;
-8. minimum test vectors.
+8. minimum test vectors;
+9. **the dual-track schema of §13.2**;
+10. **the cross-domain JOIN output schema of §19.5**;
+11. **the null-hypothesis test output schema of §20.6**.
 
 ---
 
@@ -1160,8 +1511,7 @@ Before entering `Specification 1.0.0`, the following items SHOULD be frozen:
 | --- | --- |
 | Version | 0.1.0 |
 | Stage | Working Draft |
-| Date | 2026-06-15 |
+| Date | 2026-06-28 |
 | Change type | Initial working draft |
 | Numeric impact | Establishes the default anchor, notation, and conversion rules |
-| Compatibility | Not applicable |
-| Review status | Internal draft |
+| Summary of changes | Establishes the default anchor (UBY-ANCHOR-2026-01-01Z), notation, and conversion algorithms (§11, including §11.5–11.8). Defines the dual-track design principle (§5.7), cross-domain falsifiability principle (§5.8), the full unified timeline event schema with C0/C1/C2 conformance levels (§13), cross-domain spurious-correlation risk (§18.6), cross-domain JOIN methodology (§19), null-hypothesis testing protocol (§20), quality-control framework (§21), provenance and audit trail (§22), technical validation framework (§23), relationship to prior work (§24: UTF, Cosmic Calendar, USTRS), anchor version migration protocol (§25), and incremental update mechanism (§26). Includes §16.6 database interoperability. Includes appendices A–G. |

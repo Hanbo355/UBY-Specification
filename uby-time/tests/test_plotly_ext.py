@@ -15,7 +15,6 @@ def test_plotly_imports():
         pytest.skip(f"Plotly not available: {e}")
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_uby_tick_formatter():
     """Test UBY tick formatter for plotly."""
     from uby_time.plotly_ext import UBYTickFormatter
@@ -32,7 +31,6 @@ def test_uby_tick_formatter():
     assert formatter.format_tick(float('inf')) == ""
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_tick_generation():
     """Test tick value and text generation."""
     from uby_time.plotly_ext import UBYTickFormatter
@@ -51,7 +49,6 @@ def test_tick_generation():
     assert ticktext == []
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_setup_uby_xaxis():
     """Test x-axis setup function."""
     from uby_time.plotly_ext import setup_uby_xaxis
@@ -69,7 +66,6 @@ def test_setup_uby_xaxis():
     assert config['title'] == 'UBY Time'
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_setup_uby_yaxis():
     """Test y-axis setup function."""
     from uby_time.plotly_ext import setup_uby_yaxis
@@ -87,7 +83,6 @@ def test_setup_uby_yaxis():
     assert config['title'] == 'UBY Time'
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_create_uby_timeline():
     """Test timeline creation function."""
     from uby_time.plotly_ext import create_uby_timeline
@@ -115,7 +110,6 @@ def test_create_uby_timeline():
             mock_fig.update_layout.assert_called_once()
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_create_uby_scatter():
     """Test scatter plot creation function."""
     from uby_time.plotly_ext import create_uby_scatter
@@ -164,7 +158,6 @@ def test_conversion_functions():
     assert len(uby_list) == 2
 
 
-@pytest.mark.skipif(True, reason="Plotly optional dependency")
 def test_add_uby_hover_info():
     """Test adding UBY hover information."""
     from uby_time.plotly_ext import add_uby_hover_info

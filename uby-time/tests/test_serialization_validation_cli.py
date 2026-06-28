@@ -165,7 +165,7 @@ def test_cli_format_scientific_with_digit_option(capsys):
 def test_validation_detects_anchor_version_mismatch():
     uby = UBYTime(
         uby_value=Decimal("13787002026.0"),
-        uby_version="0.2.0",
+        uby_version="0.0.9",
         model_version="LCDM-Planck2018",
         precision_level=PrecisionLevel.LEVEL_1,
         source_time="2026-01-01T00:00:00Z",

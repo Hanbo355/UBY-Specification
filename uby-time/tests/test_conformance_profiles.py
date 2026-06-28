@@ -168,7 +168,7 @@ def test_level3_model_dependency_recommends_propagation_note_without_failing_con
 
 
 def test_profile_detects_spec_version_mismatch_as_warning() -> None:
-    uby = _level2_record(uby_version="0.2.0")
+    uby = _level2_record(uby_version="0.0.9")
     messages = validate_conformance_profile(uby)
 
     assert [(message.code, message.level) for message in messages] == [

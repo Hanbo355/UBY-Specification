@@ -178,9 +178,12 @@ def redshift_to_uby(
     
     # 估计模型不确定性
     uncertainty_years = None
+    uncertainty_method = None
     if include_uncertainty:
-        uncertainty_years = _estimate_cosmological_uncertainty(z, cosmology_name, years)
-    
+        uncertainty_years, uncertainty_method = _compute_cosmological_uncertainty(
+            z, cosmology_name, years, cosmology
+        )
+
     # 构建传播注释
     propagation_note = f"computed by astropy.cosmology.{cosmology_name}.age(z={z})"
     if hasattr(cosmology, 'H0'):
@@ -188,10 +191,19 @@ def redshift_to_uby(
         if hasattr(cosmology, 'Ode0'):
             propagation_note += f", Ode0={cosmology.Ode0:.3f}"
     if include_uncertainty:
-        propagation_note += (
-            "; uncertainty_years is a heuristic annotation, not a strict "
-            "parameter-covariance re-integration"
-        )
+        if uncertainty_method == "parameter-covariance-propagation":
+            propagation_note += (
+                "; uncertainty_years from first-order (linearized) propagation of "
+                "published cosmological parameter uncertainties via numerical "
+                "partial derivatives of age(z); off-diagonal covariances are "
+                "neglected (uncorrelated-parameter approximation)"
+            )
+        else:
+            propagation_note += (
+                "; uncertainty_years is a heuristic annotation (no published parameter "
+                "uncertainties available for this model), not a strict "
+                "parameter-covariance re-integration"
+            )
 
     return UBYTime(
         uby_value=years,
@@ -211,40 +223,169 @@ def redshift_to_uby(
     )
 
 
-def _estimate_cosmological_uncertainty(z: float, cosmology_name: str, age_years: Decimal) -> Decimal:
+# Published 1-sigma uncertainties for the cosmological parameters that dominate
+# the age(z) error budget, per parameter set. Values are taken from the
+# corresponding published results and are used for first-order (linearized)
+# error propagation, NOT as ad hoc scaling factors.
+#
+# Units:
+#   H0  : km/s/Mpc
+#   Om0 : dimensionless
+#
+# Sources:
+#   Planck18 : Planck Collaboration 2018, A&A 641, A6 (TT,TE,EE+lowE+lensing):
+#              H0 = 67.36 +/- 0.54, Om0 = 0.3153 +/- 0.0073
+#   Planck15 : Planck Collaboration 2015, A&A 594, A13:
+#              H0 = 67.74 +/- 0.46, Om0 = 0.3089 +/- 0.0062
+#   Planck13 : Planck Collaboration 2013, A&A 571, A16:
+#              H0 = 67.77 +/- 1.30, Om0 = 0.3071 +/- 0.0085 (approx.)
+#   WMAP9    : Hinshaw et al. 2013, ApJS 208, 19:
+#              H0 = 69.32 +/- 0.80, Om0 = 0.2865 +/- 0.0096
+#   WMAP7    : Komatsu et al. 2011, ApJS 192, 18:
+#              H0 = 70.40 +/- 1.40, Om0 = 0.2720 +/- 0.0250 (approx.)
+#   WMAP5    : Komatsu et al. 2009, ApJS 180, 330:
+#              H0 = 70.50 +/- 1.30, Om0 = 0.2740 +/- 0.0300 (approx.)
+#
+# Models without a published parameter covariance here (e.g. the illustrative
+# Millennium and EdS cosmologies) intentionally have no entry and fall back to
+# the clearly-labelled heuristic estimate.
+PARAMETER_UNCERTAINTIES: Dict[str, Dict[str, float]] = {
+    "Planck18": {"H0": 0.54, "Om0": 0.0073},
+    "Planck15": {"H0": 0.46, "Om0": 0.0062},
+    "Planck13": {"H0": 1.30, "Om0": 0.0085},
+    "WMAP9": {"H0": 0.80, "Om0": 0.0096},
+    "WMAP7": {"H0": 1.40, "Om0": 0.0250},
+    "WMAP5": {"H0": 1.30, "Om0": 0.0300},
+}
+
+
+def _compute_cosmological_uncertainty(
+    z: float,
+    cosmology_name: str,
+    age_years: Decimal,
+    cosmology: Any,
+) -> Tuple[Decimal, str]:
+    """Compute the 1-sigma uncertainty of the cosmic age at redshift ``z``.
+
+    Prefers a first-order (linearized) propagation of published cosmological
+    parameter uncertainties. Falls back to a clearly-labelled heuristic when no
+    published parameter covariance is available for the model.
+
+    Returns
+    -------
+    (uncertainty_years, method) where ``method`` is one of
+    ``"parameter-covariance-propagation"`` or ``"heuristic"``.
     """
-    估计宇宙学模型的不确定性
-    
-    基于不同宇宙学参数的典型不确定性范围
+    params = PARAMETER_UNCERTAINTIES.get(cosmology_name)
+    if params is not None:
+        propagated = _propagate_parameter_uncertainty(z, cosmology, params)
+        if propagated is not None:
+            return propagated, "parameter-covariance-propagation"
+
+    return _heuristic_cosmological_uncertainty(z, cosmology_name, age_years), "heuristic"
+
+
+def _propagate_parameter_uncertainty(
+    z: float,
+    cosmology: Any,
+    param_sigmas: Dict[str, float],
+) -> Optional[Decimal]:
+    """First-order propagation of parameter uncertainties to the age at ``z``.
+
+    The cosmic age ``t(z; H0, Om0, ...)`` is differentiated with respect to each
+    parameter using a central finite difference, and the contributions are
+    combined in quadrature (uncorrelated-parameter approximation, i.e. diagonal
+    covariance only):
+
+        sigma_t^2 = sum_i ( dt/dp_i * sigma_p_i )^2
+
+    Returns ``None`` if the propagation cannot be performed (e.g. astropy/numpy
+    unavailable, or the cosmology cannot be cloned with new parameters), so the
+    caller can fall back to the heuristic.
     """
-    # 基于红移的相对不确定性估计
+    try:
+        from astropy import units as u
+        import math
+    except Exception:
+        return None
+
+    def age_years_for(clone: Any) -> float:
+        return float(clone.age(z).to(u.yr).value)
+
+    variance = 0.0
+    any_term = False
+
+    for name, sigma in param_sigmas.items():
+        if sigma <= 0:
+            continue
+
+        # Central value of the parameter from the cosmology object.
+        try:
+            if name == "H0":
+                central = float(cosmology.H0.value)
+            else:
+                central = float(getattr(cosmology, name))
+        except Exception:
+            continue
+
+        # Step for the central difference: a small fraction of the 1-sigma
+        # uncertainty, which keeps the linearization valid while staying well
+        # above numerical noise.
+        step = max(abs(sigma) * 0.5, abs(central) * 1e-4)
+        if step == 0:
+            continue
+
+        try:
+            if name == "H0":
+                hi = cosmology.clone(H0=(central + step) * u.km / u.s / u.Mpc)
+                lo = cosmology.clone(H0=(central - step) * u.km / u.s / u.Mpc)
+            else:
+                hi = cosmology.clone(**{name: central + step})
+                lo = cosmology.clone(**{name: central - step})
+            d_age = (age_years_for(hi) - age_years_for(lo)) / (2.0 * step)
+        except Exception:
+            # This parameter cannot be perturbed on this cosmology; skip it.
+            continue
+
+        variance += (d_age * sigma) ** 2
+        any_term = True
+
+    if not any_term:
+        return None
+
+    return Decimal(str(math.sqrt(variance)))
+
+
+def _heuristic_cosmological_uncertainty(z: float, cosmology_name: str, age_years: Decimal) -> Decimal:
+    """Heuristic fallback uncertainty for models without published parameter sigmas.
+
+    This is an explicitly non-rigorous, order-of-magnitude annotation used only
+    when no published parameter covariance is available (see
+    ``PARAMETER_UNCERTAINTIES``). It must not be interpreted as a strict error
+    estimate. The redshift-binned percentages and per-model factors below are
+    illustrative engineering placeholders, not derived quantities.
+    """
     if z < 0.1:
-        # 低红移：主要来自哈勃常数不确定性 (~2-3%)
         relative_uncertainty = Decimal('0.025')
     elif z < 1.0:
-        # 中等红移：增加物质密度参数不确定性 (~3-5%)
         relative_uncertainty = Decimal('0.04')
     elif z < 6.0:
-        # 高红移：模型依赖性增强 (~5-10%)
         relative_uncertainty = Decimal('0.075')
     else:
-        # 极高红移：大的模型不确定性 (~10-20%)
         relative_uncertainty = Decimal('0.15')
-    
-    # 根据具体宇宙学模型调整
+
     model_factors = {
-        "Planck18": Decimal('1.0'),    # 最新最精确
-        "Planck15": Decimal('1.1'),    # 稍旧但仍很精确
-        "Planck13": Decimal('1.2'),    # 更早的数据
-        "WMAP9": Decimal('1.3'),       # WMAP系列
+        "Planck18": Decimal('1.0'),
+        "Planck15": Decimal('1.1'),
+        "Planck13": Decimal('1.2'),
+        "WMAP9": Decimal('1.3'),
         "WMAP7": Decimal('1.4'),
         "WMAP5": Decimal('1.5'),
-        "Millennium": Decimal('1.8'),  # 模拟参数
-        "EdS": Decimal('2.0'),         # 简化模型
+        "Millennium": Decimal('1.8'),
+        "EdS": Decimal('2.0'),
     }
-    
-    factor = model_factors.get(cosmology_name, Decimal('1.5'))  # 默认因子
-    
+
+    factor = model_factors.get(cosmology_name, Decimal('1.5'))
     return abs(age_years) * relative_uncertainty * factor
 
 
