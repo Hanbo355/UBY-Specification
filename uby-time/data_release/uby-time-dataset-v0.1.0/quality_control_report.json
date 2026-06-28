@@ -1,11 +1,11 @@
 {
   "release_id": "uby-time-dataset-v0.1.0",
-  "generated_at_unix": 1782657229.1560009,
+  "generated_at_unix": 1782660367.3205733,
   "checks": {
     "processed_directory_exists": true,
-    "file_manifest_entries": 37,
+    "file_manifest_entries": 34,
     "csv_file_count": 12,
-    "sqlite_file_count": 13,
+    "sqlite_file_count": 10,
     "json_file_count": 12,
     "all_files_nonempty": true,
     "all_csv_have_row_counts": true,
@@ -13,9 +13,9 @@
     "sha256_generated_for_all_files": true
   },
   "summary_counts": {
-    "total_size_bytes": 6227938001,
+    "total_size_bytes": 4979497681,
     "total_csv_rows": 3172053,
-    "total_sqlite_table_rows": 4909419
+    "total_sqlite_table_rows": 3145317
   },
   "known_limitations": [
     "PBDB fossil occurrence representative UBY values use geological interval midpoints and must not be treated as exact last appearances.",

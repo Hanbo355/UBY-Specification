@@ -97,14 +97,14 @@ TRANSIENT_TEXT_FILES = {
 # `examples/` and are deliberately excluded from the deposition.
 INTERMEDIATE_EXCLUDE_PREFIXES = (
     "end_ordovician_",
-    "extinction_sensitivity_",
+    "extinction_sensitivity",
     "pbdb_extinction_dynamics",
     "pbdb_extinction_intensity_by_bin",
     "pbdb_recovery_lag",
     "pbdb_taxon_disappearances",
     "pbdb_taxon_ranges",
-    "uby_forcing_extinction_leadlag_",
-    "uby_mass_extinction_lag_",
+    "uby_forcing_extinction_leadlag",
+    "uby_mass_extinction_lag",
     "phanerozoic_diversity_",
     "phanerozoic_sqs_diversity_",
 )

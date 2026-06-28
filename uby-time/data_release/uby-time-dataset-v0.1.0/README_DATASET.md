@@ -33,8 +33,8 @@ they remain fully reproducible from the source datasets and the scripts in
 - UBY software/specification version: `0.1.0`
 - Recommended data license: Creative Commons Attribution 4.0 International (`CC-BY-4.0`)
 - Code license: BSD 3-Clause, as specified in `LICENSE`
-- Total archived processed-file size: 6,227,938,001 bytes
-- Number of processed files in manifest: 37
+- Total archived processed-file size: 4,979,497,681 bytes
+- Number of processed files in manifest: 34
 
 ## Important scientific boundary
 

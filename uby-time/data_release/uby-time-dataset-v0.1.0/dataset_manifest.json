@@ -2,11 +2,11 @@
   "release_id": "uby-time-dataset-v0.1.0",
   "release_version": "0.1.0",
   "title": "UBY-labeled cross-scale temporal database for Phanerozoic fossil occurrences, forcing events, astronomical records, and mass-extinction dynamics",
-  "generated_at_unix": 1782657229.149192,
+  "generated_at_unix": 1782660367.3135085,
   "root": "C:/Users/Administrator/Desktop/UBY-Specification/uby-time",
   "license": "CC-BY-4.0 for UBY-derived data and release metadata; BSD-3-Clause for code",
-  "file_count": 37,
-  "total_size_bytes": 6227938001,
+  "file_count": 34,
+  "total_size_bytes": 4979497681,
   "files": [
     {
       "path": "data/processed/external_databases_uby.csv",
@@ -71,18 +71,6 @@
         "total_records",
         "uby_version"
       ]
-    },
-    {
-      "path": "data/processed/extinction_sensitivity.sqlite",
-      "release_role": "sqlite_database",
-      "format": "sqlite",
-      "size_bytes": 106496,
-      "sha256": "0e5201f116974b7641c0ec3c20b21f730c19208992f3bde0474d3928cc8207bd",
-      "row_count": 216,
-      "sqlite_tables": {
-        "extinction_sensitivity_summary": 216
-      },
-      "json_top_level_keys": null
     },
     {
       "path": "data/processed/ics_chart_uby.csv",
@@ -460,39 +448,6 @@
         "uby_model",
         "uby_version"
       ]
-    },
-    {
-      "path": "data/processed/uby_forcing_extinction_leadlag.sqlite",
-      "release_role": "sqlite_database",
-      "format": "sqlite",
-      "size_bytes": 55541760,
-      "sha256": "68008ac3595239b8d1c8e194df7647effce43ef80d5c838b587feb2a0cb24ad4",
-      "row_count": 204459,
-      "sqlite_tables": {
-        "forcing_events": 24,
-        "forcing_extinction_leadlag_pairs": 11,
-        "pbdb_extinction_intensity_by_bin": 535,
-        "pbdb_recovery_lag": 6,
-        "pbdb_taxon_disappearances": 8683,
-        "pbdb_taxon_ranges": 195194,
-        "reference_mass_extinctions": 6
-      },
-      "json_top_level_keys": null
-    },
-    {
-      "path": "data/processed/uby_mass_extinction_lag.sqlite",
-      "release_role": "sqlite_database",
-      "format": "sqlite",
-      "size_bytes": 1192792064,
-      "sha256": "c2dde4154f582aadd94d831f176f004664126b1ae094e41d32d8565db6c378dd",
-      "row_count": 1559427,
-      "sqlite_tables": {
-        "extinction_events": 12,
-        "extinction_forcing_pairs": 48,
-        "forcing_events": 35,
-        "uby_events": 1559332
-      },
-      "json_top_level_keys": null
     },
     {
       "path": "data/processed/uby_unified_timeline.csv",

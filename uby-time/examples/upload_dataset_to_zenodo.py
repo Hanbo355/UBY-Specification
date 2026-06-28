@@ -87,14 +87,24 @@ def get_token() -> str:
 def request_json(method: str, url: str, token: str, **kwargs: Any) -> dict[str, Any]:
     params = dict(kwargs.pop("params", {}) or {})
     params["access_token"] = token
-    response = requests.request(method, url, params=params, timeout=REQUEST_TIMEOUT, **kwargs)
-    if not response.ok:
-        raise RuntimeError(
-            f"{method} {url} failed with HTTP {response.status_code}:\n{response.text[:3000]}"
-        )
-    if response.text.strip():
-        return response.json()
-    return {}
+    last_error: Exception | None = None
+    for attempt in range(6):
+        try:
+            response = requests.request(method, url, params=params, timeout=REQUEST_TIMEOUT, **kwargs)
+            if not response.ok:
+                raise RuntimeError(
+                    f"{method} {url} failed with HTTP {response.status_code}:\n{response.text[:3000]}"
+                )
+            if response.text.strip():
+                return response.json()
+            return {}
+        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError) as e:
+            last_error = e
+            wait = 5 * (attempt + 1)
+            print(f"  Network error (attempt {attempt + 1}/6), retrying in {wait}s: {type(e).__name__}")
+            import time as _time
+            _time.sleep(wait)
+    raise RuntimeError(f"Network error after 6 retries: {last_error}")
 
 
 def normalize_metadata(raw: dict[str, Any]) -> dict[str, Any]:
